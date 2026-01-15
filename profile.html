@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya - Era Baru Membaca</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="dashboard.html" class="brand">Era Baru Membaca</a>
+        <ul class="nav-links">
+            <li><a href="dashboard.html"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <main class="profile-wrapper">
+        <div class="profile-container">
+            
+            <div class="profile-card">
+                <div class="img-container">
+                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" class="big-profile-img" id="largeProfileImg" alt="Foto Profil">
+                    <label for="uploadInput" class="edit-icon" title="Ganti Foto">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="uploadInput" accept="image/*" style="display: none;">
+                </div>
+
+                <h2 id="profUser">Loading...</h2>
+                <p class="badge-member">✨ Member Setia</p>
+                
+                <div class="profile-stats">
+                    <div class="stat-box">
+                        <i class="fas fa-user-circle"></i>
+                        <p class="label">Username</p>
+                        <h4 id="valUsername">-</h4>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-book-bookmark"></i>
+                        <p class="label">Koleksi</p>
+                        <h4 id="valSavedBooks">0 Buku</h4>
+                    </div>
+                </div>
+                
+                <button id="profileLogoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="my-collection-section" id="koleksi">
+                <div class="section-header">
+                    <h3>📚 Koleksi Buku Saya</h3>
+                    <p>Daftar buku yang sudah kamu simpan untuk dibaca nanti.</p>
+                </div>
+                
+                <div class="saved-grid" id="savedBookList">
+                    </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="profile-script.js"></script>
+</body>
+</html>

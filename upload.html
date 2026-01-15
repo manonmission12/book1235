@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Buku - Era Baru Membaca</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Style khusus halaman upload */
+        .upload-wrapper { padding: 2rem; max-width: 600px; margin: 40px auto; animation: fadeInUp 0.6s ease; }
+        .preview-img { width: 100px; height: 140px; object-fit: cover; border-radius: 8px; display: none; margin-top: 10px; border: 2px solid var(--primary); }
+        .btn-cancel { background: transparent; border: 1px solid var(--danger); color: var(--danger); margin-top: 10px; }
+        .btn-cancel:hover { background: var(--danger); color: white; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="dashboard.html" class="brand">Era Baru Membaca</a>
+        
+        <div class="profile-menu">
+            <div class="profile-trigger" id="profileTrigger">
+                <span id="userDisplay">Halo, User</span>
+                <img src="https://ui-avatars.com/api/?background=random&color=fff" class="avatar" alt="Profil">
+            </div>
+            
+            <div class="dropdown-menu" id="profileDropdown">
+                <a href="profile.html" class="dropdown-item">
+                    <i class="fas fa-user"></i> Profil Saya
+                </a>
+                <a href="profile.html#koleksi" class="dropdown-item">
+                    <i class="fas fa-bookmark"></i> Koleksi Saya
+                </a>
+                <a href="upload.html" class="dropdown-item">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload Buku
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" id="logoutBtn" class="dropdown-item" style="color: #ff4d4d;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="upload-wrapper">
+        <div class="login-form-section" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
+            <form class="upload-form">
+                <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary);">Upload Buku Baru</h2>
+                
+                <div class="input-group">
+                    <label>Judul Buku</label>
+                    <input type="text" id="bookTitle" required placeholder="Contoh: Atomic Habits" style="color: white;">
+                </div>
+
+                <div class="input-group">
+                    <label>Penulis</label>
+                    <input type="text" id="bookAuthor" required placeholder="Nama Penulis" style="color: white;">
+                </div>
+
+                <div class="input-group">
+                    <label>Kategori</label>
+                    <select id="bookCategory" style="width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        <option value="Teknologi" style="color: black;">Teknologi</option>
+                        <option value="Novel" style="color: black;">Novel</option>
+                        <option value="Bisnis" style="color: black;">Bisnis</option>
+                        <option value="Filsafat" style="color: black;">Filsafat</option>
+                        <option value="Self-Improvement" style="color: black;">Self-Improvement</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Cover Buku (Gambar)</label>
+                    <input type="file" id="bookCover" accept="image/*" required style="color: white;">
+                    <img id="coverPreview" class="preview-img">
+                </div>
+
+                <div class="input-group">
+                    <label>File Buku (PDF)</label>
+                    <input type="file" id="bookFile" accept="application/pdf" required style="color: white;">
+                </div>
+
+                <div class="input-group">
+                    <label>Deskripsi Singkat</label>
+                    <textarea id="bookDesc" rows="4" placeholder="Ceritakan sedikit tentang bukumu..." style="width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);"></textarea>
+                </div>
+
+                <button type="submit" class="login-button">🚀 Terbitkan Buku</button>
+                <button type="button" class="login-button btn-cancel" onclick="window.location.href='dashboard.html'">Batal</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="upload-script.js"></script>
+</body>
+</html>

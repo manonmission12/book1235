@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Era Baru Membaca</title>
+    
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="brand">Era Baru Membaca</a>
+        
+        <div class="profile-menu">
+            <div class="profile-trigger" id="profileTrigger">
+                <span id="userDisplay">Halo, User</span>
+                <img src="https://ui-avatars.com/api/?background=random&color=fff" class="avatar" alt="Profil">
+            </div>
+            
+            <div class="dropdown-menu" id="profileDropdown">
+                <a href="profile.html" class="dropdown-item">
+                    <i class="fas fa-user"></i> Profil Saya
+                </a>
+                <a href="profile.html#koleksi" class="dropdown-item">
+                    <i class="fas fa-bookmark"></i> Koleksi Saya
+                </a>
+                <a href="upload.html" class="dropdown-item">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload Buku
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" id="logoutBtn" class="dropdown-item" style="color: #ff4d4d;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <main class="dashboard-content">
+        
+        <div class="search-wrapper">
+            <div class="search-box">
+                <input type="text" id="searchBook" placeholder="🔍 Cari judul buku atau penulis inspiratif...">
+            </div>
+        </div>
+
+        <div class="category-tabs">
+            <button class="btn-cat active" data-cat="all">Semua</button>
+            <button class="btn-cat" data-cat="Bisnis">Bisnis</button>
+            <button class="btn-cat" data-cat="Self-Improvement">Self-Improvement</button>
+            <button class="btn-cat" data-cat="Filsafat">Filsafat</button>
+            <button class="btn-cat" data-cat="Teknologi">Teknologi</button>
+            <button class="btn-cat" data-cat="Novel">Novel</button>
+            
+            <a href="upload.html" class="btn-upload-inline">
+                <i class="fas fa-plus"></i> Upload
+            </a>
+        </div>
+
+        <div class="book-grid" id="bookList">
+            </div>
+
+    </main>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-img-wrapper">
+                    <img id="modalImg" src="" alt="Cover Buku">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalTitle">Judul Buku</h2>
+                    <p class="modal-meta">Penulis: <span id="modalAuthor">-</span></p>
+                    <div class="tags">
+                        <span class="tag" id="modalCategory">Kategori</span>
+                        <span class="tag rating">⭐ <span id="modalRating">0.0</span></span>
+                    </div>
+                    <div class="modal-actions" style="margin-top: 30px;">
+                        <button class="btn-primary">📖 Baca Sekarang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard-script.js"></script>
+</body>
+</html>
