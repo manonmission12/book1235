@@ -1,6 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. CEK USER ---
+    // --- 0. LOGIKA DARK MODE ---
+    const themeToggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const icon = themeToggle.querySelector('i');
+
+    // Cek LocalStorage saat pertama kali load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    // Event Listener Tombol
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            // Pindah ke Light
+            root.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            icon.classList.replace('fa-sun', 'fa-moon');
+        } else {
+            // Pindah ke Dark
+            root.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        }
+    });
+
+    // --- 1. AUTH CHECK ---
     const currentUser = localStorage.getItem('currentUser'); 
     if (!currentUser) {
         window.location.href = 'index.html';
@@ -8,10 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     const SAVED_KEY = `savedBooks_${currentUser}`;
-
-    // Update UI User
     const userDisplay = document.getElementById('userDisplay');
-    if(userDisplay) userDisplay.innerText = `Halo, ${currentUser} 👋`;
+    if(userDisplay) userDisplay.innerText = `Halo, ${currentUser}`;
 
     const savedPhoto = localStorage.getItem(`profilePic_${currentUser}`);
     const navAvatar = document.querySelector('.profile-trigger .avatar');
@@ -41,10 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
     } catch (e) { uploadedBooks = []; }
-
     let allBooks = [...uploadedBooks.reverse(), ...defaultBooks];
 
-    // --- 3. HELPER: TOAST MSG ---
+    // --- 3. TOAST MSG ---
     const showToast = (msg, type = 'success') => {
         let container = document.getElementById('toast-container');
         if (!container) {
@@ -54,22 +79,22 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(container);
         }
         const toast = document.createElement('div');
-        const color = type === 'success' ? '#2ecc71' : '#ff4757';
+        const bg = type === 'success' ? '#27ae60' : '#c0392b';
         
         toast.style.cssText = `
-            background: #111; color: white; padding: 16px 24px; border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3); font-family: 'Plus Jakarta Sans', sans-serif; 
-            font-weight: 600; font-size: 0.95rem; border-left: 5px solid ${color};
-            display: flex; align-items: center; gap: 12px;
-            animation: slideIn 0.3s forwards;
+            background: #222; color: #fff; padding: 12px 20px; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: 'Inter', sans-serif; 
+            font-size: 0.9rem; font-weight: 500; border-left: 4px solid ${bg};
+            display: flex; align-items: center; gap: 10px;
+            animation: fadeIn 0.3s forwards;
         `;
         
-        toast.innerHTML = `<span>${type === 'success'?'✅':'⚠️'}</span> <span>${msg}</span>`;
+        toast.innerHTML = `<i class="fas ${type==='success'?'fa-check':'fa-exclamation-circle'}" style="color:${bg}"></i> <span>${msg}</span>`;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     };
 
-    // --- 4. RENDER BUKU (DARK THEME CARDS) ---
+    // --- 4. RENDER FUNCTION (BERSIH - TANPA WARNA WARNI) ---
     const bookList = document.getElementById('bookList');
     const searchBar = document.getElementById('searchBook');
     const categoryBtns = document.querySelectorAll('.btn-cat');
@@ -78,9 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         bookList.innerHTML = '';
         
         if (data.length === 0) {
-            bookList.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; margin-top: 50px;">
-                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                <p style="font-weight:600; font-size:1.1rem;">Buku tidak ditemukan...</p>
+            bookList.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-tertiary); margin-top: 60px;">
+                <i class="fas fa-search" style="font-size: 2.5rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                <p style="font-weight:500;">Buku tidak ditemukan.</p>
             </div>`;
             return;
         }
@@ -89,20 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'book-card';
             
-            // --- LOGIKA HITAM & NEON ---
-            const hue = Math.floor(Math.random() * 360);
-            
-            // 1. Background: Hitam Pekat (#151515)
-            const bg = '#151515';
-            
-            // 2. Aksen Neon (Border & Tag)
-            // Saturation 80%, Lightness 60% -> Warna cerah menyala
-            const accentColor = `hsl(${hue}, 80%, 60%)`;
-
-            // Terapkan Style
-            card.style.background = bg;
-            card.style.borderColor = accentColor; // Border menyala
-            card.style.borderWidth = '1px';
+            // HAPUS SEMUA LOGIKA WARNA RANDOM DI SINI
+            // Warna sekarang diatur otomatis oleh CSS Variable (--bg-card)
 
             const imgSrc = book.img || book.image; 
             
@@ -112,10 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${book.title}</h3>
                     <p>${book.author}</p>
                     
-                    <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center;">
-                         <span class="tag" style="background: ${accentColor}; color: #000; box-shadow: 0 0 10px ${accentColor};">
-                            ${book.category}
-                         </span>
+                    <div class="card-footer">
+                         <span class="tag">${book.category}</span>
                          <span class="mini-rating">⭐ ${book.rating}</span>
                     </div>
                 </div>
@@ -125,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    renderBooks(allBooks); // Initial Render
+    renderBooks(allBooks); 
 
     // --- 5. SEARCH & FILTER ---
     if (searchBar) {
@@ -154,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 6. MODAL & FEATURES ---
+    // --- 6. MODAL & NOTES ---
     const modal = document.getElementById('detailModal');
 
     function openModal(book) {
@@ -165,37 +176,36 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalAuthor').innerText = book.author;
         document.getElementById('modalCategory').innerText = book.category;
         document.getElementById('modalRating').innerText = book.rating;
-
-        // Container Tombol
+        
+        // Actions Button
         const btnContainer = document.querySelector('.modal-actions');
         btnContainer.innerHTML = ''; 
 
-        // 1. Tombol Baca
+        // Read Button
         const btnRead = document.createElement('button');
         btnRead.className = 'btn-primary';
-        btnRead.innerHTML = '📖 Baca Sekarang';
+        btnRead.innerHTML = 'Baca Sekarang';
         btnRead.onclick = () => {
             const pdfLink = book.file || book.pdf; 
             if (pdfLink) window.open(pdfLink, '_blank');
-            else showToast('File PDF tidak ditemukan!', 'error');
+            else showToast('PDF tidak tersedia', 'error');
         };
         btnContainer.appendChild(btnRead);
 
-        // 2. Tombol Simpan
+        // Save Button
         let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
         const isSaved = savedList.some(item => item.id === book.id);
         
         const btnSave = document.createElement('button');
-        const setSaveStyle = (active) => {
-            btnSave.style.cssText = `
-                margin-left: 10px; padding: 12px 20px; border-radius: 12px; font-weight: 700; cursor: pointer;
-                transition: 0.2s; border: 2px solid #111; font-size: 0.95rem;
-                background: ${active ? '#111' : 'white'};
-                color: ${active ? 'white' : '#111'};
-            `;
-            btnSave.innerHTML = active ? '<i class="fas fa-check"></i> Tersimpan' : '<i class="far fa-bookmark"></i> Simpan';
+        
+        const updateSaveBtn = (saved) => {
+            btnSave.className = 'btn-primary'; 
+            btnSave.style.background = 'transparent';
+            btnSave.style.border = '1px solid var(--text-secondary)';
+            btnSave.style.color = saved ? '#27ae60' : 'var(--text-secondary)';
+            btnSave.innerHTML = saved ? '<i class="fas fa-check"></i> Tersimpan' : '<i class="far fa-bookmark"></i> Simpan';
         };
-        setSaveStyle(isSaved);
+        updateSaveBtn(isSaved);
 
         btnSave.onclick = () => {
             savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
@@ -203,12 +213,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (index !== -1) {
                 savedList.splice(index, 1);
-                showToast('Dihapus dari koleksi.');
-                setSaveStyle(false);
+                showToast('Dihapus dari koleksi');
+                updateSaveBtn(false);
             } else {
                 savedList.push(book);
-                showToast('Berhasil disimpan!');
-                setSaveStyle(true);
+                showToast('Disimpan ke koleksi');
+                updateSaveBtn(true);
             }
             localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
             
@@ -218,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         btnContainer.appendChild(btnSave);
 
-        // 3. Catatan Pribadi
+        // Notes Logic
         const noteInput = document.getElementById('noteInput');
         const saveNoteBtn = document.getElementById('saveNoteBtn');
         const saveStatus = document.getElementById('saveStatus');
@@ -229,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveNoteBtn.onclick = () => {
             localStorage.setItem(noteKey, noteInput.value);
-            saveStatus.style.display = 'inline-flex';
+            saveStatus.style.display = 'inline-block';
             setTimeout(() => { saveStatus.style.display = 'none'; }, 2000);
         };
 
@@ -250,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     document.getElementById('logoutBtn').onclick = () => {
-        if(confirm('Keluar dari akun?')) {
+        if(confirm('Logout dari akun?')) {
             localStorage.removeItem('currentUser');
             window.location.href = 'index.html';
         }
