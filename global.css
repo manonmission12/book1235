@@ -3,22 +3,15 @@
 
 :root {
     /* Palet Warna "Cerah & Ceria" */
-    --primary: #0096c7; /* Biru laut yang segar */
+    --primary: #0096c7;
     --primary-hover: #0077b6;
-    
-    /* Ganti Glass Gelap jadi Glass Putih/Terang */
     --glass: rgba(255, 255, 255, 0.85); 
     --glass-border: rgba(255, 255, 255, 1);
-    
-    /* Warna Teks untuk Background Terang */
-    --text-main: #2d3436; /* Hitam abu (tidak hitam pekat biar gak sakit mata) */
-    --text-muted: #636e72; /* Abu-abu */
-    
+    --text-main: #2d3436;
+    --text-muted: #636e72;
     --bg-light: #f0f9ff;
     --danger: #ff4d4d;
     --success: #00b894;
-    
-    /* Bayangan lembut untuk efek 3D */
     --shadow-soft: 0 10px 25px rgba(112, 144, 176, 0.15);
 }
 
@@ -29,15 +22,24 @@ body {
     color: var(--text-main); 
     min-height: 100vh;
     
-    /* BACKGROUND GRADASI CERAH (Pastel Blue - Purple) */
-    background-image: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-    background-attachment: fixed; 
-    background-size: cover;
-    
+    /* --- BACKGROUND MERIAH BERGERAK --- */
+    /* Kita pakai 4 warna pastel dan membuatnya ukurannya 400% */
+    background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #90f7ec, #ff9a9e);
+    background-size: 400% 400%;
+    /* Animasi berjalan selama 15 detik tanpa henti */
+    animation: gradientBG 3s ease infinite;
     font-weight: 400;
-    animation: pageFadeIn 0.8s ease-out;
 }
 
+/* Keyframes untuk menggerakkan background */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Animasi Masuk Halaman Tetap Ada */
+.fade-in-up { animation: pageFadeIn 0.8s ease-out; }
 @keyframes pageFadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -47,7 +49,7 @@ body {
 .navbar {
     display: flex; justify-content: space-between; align-items: center;
     padding: 0 6%; height: 80px;
-    background: rgba(255, 255, 255, 0.8); /* Putih Transparan */
+    background: rgba(255, 255, 255, 0.7); /* Lebih transparan biar bg kelihatan */
     backdrop-filter: blur(20px);
     position: sticky; top: 0; z-index: 2000;
     border-bottom: 1px solid rgba(255,255,255,0.5);
@@ -56,22 +58,16 @@ body {
 
 .brand {
     font-size: 1.5rem; 
-    font-weight: 700;
-    /* Gradient Text biar manis */
-    background: linear-gradient(to right, #0096c7, #8ec5fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    color: black;
+    /* Gradient Text yang senada dengan bg */
     text-decoration: none;
 }
 
 .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; height: 100%; }
 .nav-links a { 
     color: var(--text-muted); 
-    text-decoration: none; 
-    font-weight: 500; 
-    font-size: 0.95rem; 
-    transition: 0.3s; 
-    position: relative; 
+    text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.3s; position: relative; 
 }
 .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 .nav-links a.active::after {
@@ -83,13 +79,10 @@ body {
 .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s; }
 .profile-trigger:hover .avatar { border-color: var(--primary); transform: scale(1.1); }
 
-/* Dropdown Menu (Putih Bersih) */
 .dropdown-menu {
-    position: absolute; top: 60px; right: 0; width: 220px; 
-    background: white;
+    position: absolute; top: 60px; right: 0; width: 220px; background: white;
     border: 1px solid rgba(0,0,0,0.05); border-radius: 15px;
-    display: none; flex-direction: column; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 .dropdown-menu.active { display: flex; animation: fadeIn 0.2s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -102,12 +95,8 @@ body {
 #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
 .toast {
     min-width: 250px; padding: 16px 20px; border-radius: 12px;
-    background: white; 
-    color: var(--text-main);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-left: 5px solid var(--primary);
-    animation: slideIn 0.3s ease-out forwards; font-size: 0.9rem; 
-    font-weight: 500;
+    background: white; color: var(--text-main); box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-left: 5px solid var(--primary); animation: slideIn 0.3s ease-out forwards; font-size: 0.9rem; font-weight: 500;
 }
 .toast.success { border-left-color: var(--success); }
 .toast.error { border-left-color: var(--danger); }

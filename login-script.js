@@ -1,91 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // FUNGSI TOAST (Notifikasi)
-    const showToast = (message, type = 'success') => {
-        let container = document.getElementById('toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            document.body.appendChild(container);
-        }
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerText = message;
-        container.appendChild(toast);
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease-out forwards';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    };
 
-    // Cek jika sudah login
-    if (localStorage.getItem('currentUser')) {
+    // Cek kalau sudah login, langsung lempar ke dashboard
+    if(localStorage.getItem('currentUser')) {
         window.location.href = 'dashboard.html';
     }
-
-    const loginForm = document.querySelector('.login-form');
-    const passwordInput = document.getElementById('password');
+    
+    // Toggle Password Eye
     const togglePassword = document.getElementById('togglePassword');
-
-    // Fitur Mata Password
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+    const passwordInput = document.getElementById('password');
+    if(togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🔒';
         });
     }
 
-    if (loginForm) {
+    // Login Logic
+    const loginForm = document.getElementById('loginForm');
+    const formSection = document.querySelector('.login-form-section'); // Ambil section formnya
+
+    if(loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const user = document.getElementById('username').value.trim();
-            const pass = passwordInput.value.trim();
 
-            console.log("Mencoba login dengan:", user, pass); // Cek di Console Browser
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInputVal = document.getElementById('password').value;
 
-            // --- AMBIL DATA USER AMAN ---
-            let users = [];
-            try {
-                const storedData = localStorage.getItem('registeredUsers');
-                console.log("Data di Database:", storedData); // Cek isi database
-                users = JSON.parse(storedData) || [];
-            } catch (e) {
-                users = [];
-            }
-            
-            if (!Array.isArray(users)) users = [];
+            const storedUser = localStorage.getItem(`user_${usernameInput}`);
 
-            // 1. Cek apakah database kosong
-            if (users.length === 0 && user !== 'admin') {
-                showToast('Belum ada user terdaftar! Silakan daftar dulu.', 'error');
-                return;
-            }
-
-            // 2. Cari User
-            const foundUser = users.find(u => u.username === user);
-            
-            if (!foundUser) {
-                // Jika user admin bawaan
-                if (user === 'admin' && pass === '123') {
-                    localStorage.setItem('currentUser', user);
-                    showToast('Login Admin Berhasil!', 'success');
-                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
-                    return;
+            if (storedUser) {
+                const userData = JSON.parse(storedUser);
+                if (userData.password === passwordInputVal) {
+                    // Login Sukses
+                    localStorage.setItem('currentUser', usernameInput);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Login Gagal (Password Salah) -> Goyangkan Form!
+                    triggerShake();
+                    alert("Password salah!");
                 }
-                showToast('Username tidak ditemukan! Coba daftar dulu.', 'error');
-                return;
+            } else {
+                // Login Gagal (Username Tidak Ada) -> Goyangkan Form!
+                triggerShake();
+                alert("Username tidak ditemukan.");
             }
-
-            // 3. Cek Password
-            if (foundUser.password !== pass) {
-                showToast('Password salah!', 'error');
-                return;
-            }
-
-            // LOGIN SUKSES
-            localStorage.setItem('currentUser', user);
-            showToast('Login Berhasil! Mengalihkan...', 'success');
-            setTimeout(() => window.location.href = 'dashboard.html', 1000);
         });
+    }
+
+    // Fungsi untuk membuat efek goyang
+    function triggerShake() {
+        if(formSection) {
+            formSection.classList.add('shake');
+            // Hapus class shake setelah animasinya selesai (500ms) biar bisa digoyang lagi
+            setTimeout(() => {
+                formSection.classList.remove('shake');
+            }, 500);
+        }
     }
 });

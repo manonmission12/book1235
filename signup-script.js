@@ -1,84 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // FUNGSI TOAST
-    const showToast = (message, type = 'success') => {
-        let container = document.getElementById('toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            document.body.appendChild(container);
-        }
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerText = message;
-        container.appendChild(toast);
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease-out forwards';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    };
-
-    const signupForm = document.querySelector('.signup-form');
+    
+    const signupForm = document.getElementById('signupForm');
 
     if (signupForm) {
         signupForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // Ambil Value
-            const userElement = document.getElementById('newUsername');
-            const passElement = document.getElementById('newPassword');
-            const confirmElement = document.getElementById('confirmPassword');
 
-            // Cek apakah elemen ada di HTML (Pencegahan Error)
-            if (!userElement || !passElement || !confirmElement) {
-                showToast('Error: Form HTML tidak lengkap!', 'error');
-                return;
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validasi Sederhana
+            if (username.length < 3) {
+                alert("Username minimal 3 karakter."); return;
+            }
+            if (password.length < 6) {
+                alert("Password minimal 6 karakter."); return;
+            }
+            if (password !== confirmPassword) {
+                alert("Password tidak cocok!"); return;
+            }
+            if (localStorage.getItem(`user_${username}`)) {
+                alert("Username sudah terpakai! Pilih yang lain."); return;
             }
 
-            const user = userElement.value.trim();
-            const pass = passElement.value.trim();
-            const confirm = confirmElement.value.trim();
+            // Simpan Data User Baru
+            const userData = { username, password, joinDate: new Date().toLocaleDateString() };
+            localStorage.setItem(`user_${username}`, JSON.stringify(userData));
 
-            // Validasi Input Kosong
-            if (!user || !pass || !confirm) {
-                showToast('Semua kolom wajib diisi!', 'error');
-                return;
-            }
+            // --- BAGIAN MERIAH: EFEK KONFETI! ---
+            // Kita tembakkan konfeti dari kiri dan kanan bawah
+            var duration = 2 * 1000; // 2 detik
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
-            // Validasi Password Match
-            if (pass !== confirm) {
-                showToast('Konfirmasi password tidak cocok!', 'error');
-                return;
-            }
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
 
-            // --- BAGIAN PENTING: MENGAMBIL DATA DENGAN AMAN ---
-            let users = [];
-            try {
-                const storedData = localStorage.getItem('registeredUsers');
-                users = JSON.parse(storedData) || [];
-            } catch (error) {
-                // Jika data rusak, reset jadi array kosong
-                users = [];
-            }
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) { return clearInterval(interval); }
+              var particleCount = 50 * (timeLeft / duration);
+              // Tembak dari kiri
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              // Tembak dari kanan
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
 
-            // Pastikan users adalah Array (jika bukan, reset)
-            if (!Array.isArray(users)) {
-                users = [];
-            }
+            // Ubah teks tombol sementara
+            const btn = signupForm.querySelector('.login-button');
+            const originalText = btn.innerText;
+            btn.innerText = "Hore! Berhasil... 🥳";
+            btn.disabled = true;
 
-            // Cek Username Ganda
-            if (users.some(u => u.username === user)) {
-                showToast('Username sudah terdaftar!', 'error');
-                return;
-            }
-
-            // Simpan Data Baru
-            users.push({ username: user, password: pass });
-            localStorage.setItem('registeredUsers', JSON.stringify(users));
-            
-            showToast('Pendaftaran Berhasil! Mengalihkan...', 'success');
-            
-            // Redirect ke index.html (File Login kamu)
-            setTimeout(() => window.location.href = 'index.html', 1500);
+            // Tunggu 2.5 detik buat menikmati konfeti sebelum pindah
+            setTimeout(() => {
+                 window.location.href = 'index.html';
+            }, 2500);
         });
     }
 });
