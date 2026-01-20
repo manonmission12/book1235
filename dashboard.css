@@ -1,4 +1,4 @@
-/* --- LAYOUT UTAMA --- */
+/* --- LAYOUT --- */
 .dashboard-content {
     padding: 2rem 5% 5rem;
     max-width: 1400px;
@@ -13,94 +13,65 @@
 
 /* --- SEARCH BAR --- */
 .search-wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 2rem 0 2.5rem;
+    display: flex; justify-content: center; margin: 2rem 0 2.5rem;
 }
 
-.search-box {
-    width: 100%;
-    max-width: 600px;
-}
+.search-box { width: 100%; max-width: 600px; }
 
 .search-box input {
     width: 100%;
     padding: 16px 30px;
     border-radius: 50px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
+    border: 1px solid white;
+    background: white; /* Putih bersih */
+    color: var(--text-main);
     font-size: 1rem;
     outline: none;
     transition: 0.3s;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-soft);
 }
 
 .search-box input:focus {
     border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+    box-shadow: 0 5px 20px rgba(0, 150, 199, 0.2);
 }
 
-/* --- FILTER & UPLOAD CONTAINER --- */
-/* Kita pakai satu container aja biar RAPI & SEJAJAR */
-.category-tabs {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center; /* Posisi di tengah layar */
-    align-items: center; /* Pastikan tinggi sejajar vertikal */
-    margin-bottom: 40px;
-}
+/* --- FILTER --- */
+.category-tabs { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 40px; }
 
-/* STYLE TOMBOL KATEGORI */
 .btn-cat {
-    padding: 10px 22px; /* Ukuran Standar */
-    border-radius: 60px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255, 250, 250, 0.19);
-    color: rgb(255, 255, 255);
+    padding: 10px 22px;
+    border-radius: 30px;
+    border: 1px solid transparent;
+    background: white;
+    color: var(--text-muted);
     cursor: pointer;
     transition: 0.3s;
     font-size: 0.9rem;
     font-weight: 500;
-    font-family: inherit;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .btn-cat:hover, .btn-cat.active {
     background: var(--primary);
     color: white;
-    border-color: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgb(0, 180, 216);
+    box-shadow: 0 5px 15px rgba(0, 150, 199, 0.3);
 }
 
-/* STYLE TOMBOL UPLOAD (Ukuran disamakan dengan Kategori) */
+/* Tombol Upload Inline */
 .btn-upload-inline {
-    /* Padding SAMA PERSIS dengan btn-cat biar sejajar */
-    padding: 10px 22px; 
+    padding: 10px 22px;
     border-radius: 30px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    
-    /* WARNA SPESIAL (Gradasi Biru) */
+    font-size: 0.9rem; font-weight: 600; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: 0.3s;
     background: linear-gradient(135deg, var(--primary), #48cae4);
     color: white;
-    border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 150, 199, 0.3);
+    margin-left: 5px;
 }
-
-.btn-upload-inline:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 180, 216, 0.5);
-    filter: brightness(1.1);
-}
+.btn-upload-inline:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 150, 199, 0.4); }
 
 /* --- GRID BUKU --- */
 .book-grid {
@@ -110,173 +81,107 @@
     padding-bottom: 50px;
 }
 
-/* KARTU BUKU */
+/* KARTU BUKU TERANG */
 .book-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-soft);
 }
 
 .book-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-    border-color: var(--primary);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
 }
 
 .book-card img {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    width: 100%; height: 280px; object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .book-info {
-    padding: 15px 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 20px;
+    flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;
 }
 
 .book-info h3 {
-    font-size: 1.05rem;
-    color: white;
+    font-size: 1.1rem;
+    color: var(--text-main);
     margin-bottom: 5px;
     line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-weight: 700;
 }
 
 .book-info p {
-    font-size: 0.85rem;
-    color: #aaa;
-    margin-bottom: 12px;
+    font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;
 }
 
 .tag {
     font-size: 0.75rem;
-    background: rgba(255,255,255,0.1);
-    padding: 5px 10px;
-    border-radius: 6px;
-    color: #ddd;
+    background: #eef2f7; /* Abu sangat muda */
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #555;
+    font-weight: 600;
 }
 
 .mini-rating {
-    font-size: 0.85rem;
-    color: #ffd700;
-    font-weight: bold;
+    font-size: 0.9rem; color: #ffbc00; font-weight: bold;
 }
 
-/* --- MODAL POP-UP --- */
+/* --- MODAL POP-UP (TERANG) --- */
 .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    padding: 20px;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Gelapkan background belakang modal */
+    backdrop-filter: blur(5px);
+    display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
 }
 
 .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
 
 .modal-content {
-    background: #121212;
-    width: 100%;
-    max-width: 850px;
-    border-radius: 20px;
-    border: 1px solid var(--glass-border);
-    position: relative;
+    background: white;
+    width: 100%; max-width: 850px;
+    border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    display: flex; flex-direction: column;
 }
 
 .modal-body { display: flex; flex-wrap: wrap; }
 
-.modal-img-wrapper {
-    flex: 1;
-    min-width: 300px;
-    height: 500px;
-    position: relative;
-}
-
-.modal-img-wrapper img {
-    width: 100%; height: 100%; object-fit: cover;
-}
-
-.modal-img-wrapper::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, transparent 80%, #121212 100%);
-}
+.modal-img-wrapper { flex: 1; min-width: 300px; height: 500px; position: relative; }
+.modal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
 
 .modal-info {
-    flex: 1.3;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex: 1.3; padding: 40px;
+    display: flex; flex-direction: column; justify-content: center;
 }
 
-.modal-info h2 { color: var(--primary); margin-bottom: 10px; font-size: 2rem; line-height: 1.2; }
-.modal-meta { color: #bbb; margin-bottom: 25px; font-size: 1.1rem; }
-.desc { color: #ccc; line-height: 1.7; margin-bottom: 30px; max-height: 150px; overflow-y: auto; padding-right: 10px; }
-
-.desc::-webkit-scrollbar { width: 5px; }
-.desc::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+.modal-info h2 { color: var(--text-main); margin-bottom: 10px; font-size: 2rem; line-height: 1.2; font-weight: 800; }
+.modal-meta { color: var(--text-muted); margin-bottom: 25px; font-size: 1.1rem; }
 
 .btn-primary {
     background: var(--primary); color: white; border: none;
-    padding: 14px 30px; border-radius: 10px; font-weight: bold;
+    padding: 14px 30px; border-radius: 12px; font-weight: bold;
     cursor: pointer; transition: 0.3s; font-size: 1rem;
-    box-shadow: 0 0 15px rgba(0, 180, 216, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 150, 199, 0.3);
 }
-.btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 180, 216, 0.5); }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
 .close-btn {
     position: absolute; top: 20px; right: 25px;
     font-size: 2.5rem; color: white; cursor: pointer; z-index: 10;
-    text-shadow: 0 2px 10px black; transition: 0.3s;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
-.close-btn:hover { color: var(--danger); transform: rotate(90deg); }
+.close-btn:hover { color: var(--danger); }
 
-/* --- RESPONSIVE MOBILE (HP) --- */
 @media (max-width: 768px) {
-    /* Di HP tetap rapi di tengah */
-    .category-tabs {
-        justify-content: flex-start; /* Geser kiri biar bisa discroll */
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 10px;
-        flex-wrap: nowrap; /* Jangan turun baris di HP */
-    }
-    
-    .category-tabs::-webkit-scrollbar { display: none; }
-
-    /* Tombol upload tetap inline, gak full width biar gak aneh */
-    .btn-upload-inline {
-        white-space: nowrap;
-    }
-
+    .filter-container, .category-tabs { justify-content: flex-start; overflow-x: auto; white-space: nowrap; padding-bottom: 10px; }
     .modal-body { flex-direction: column; }
-    .modal-img-wrapper { height: 250px; min-width: 100%; }
-    .modal-img-wrapper::after { background: linear-gradient(to top, #121212 5%, transparent); }
-    .modal-info { padding: 25px; }
-    .modal-info h2 { font-size: 1.5rem; }
-    
-    .book-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .modal-img-wrapper { height: 250px; }
 }
