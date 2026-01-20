@@ -54,6 +54,9 @@
             <button class="btn-cat" data-cat="Filsafat">Filsafat</button>
             <button class="btn-cat" data-cat="Teknologi">Teknologi</button>
             <button class="btn-cat" data-cat="Novel">Novel</button>
+            <button class="btn-cat" data-cat="saved" style="border: 1px solid var(--primary); color: var(--primary);">
+                <i class="fas fa-bookmark"></i> Tersimpan
+            </button>
             
             <a href="upload.html" class="btn-upload-inline">
                 <i class="fas fa-plus"></i> Upload
@@ -79,9 +82,28 @@
                         <span class="tag" id="modalCategory">Kategori</span>
                         <span class="tag rating">⭐ <span id="modalRating">0.0</span></span>
                     </div>
-                    <div class="modal-actions" style="margin-top: 30px;">
+                    
+                    <div class="modal-actions" style="margin-top: 30px; margin-bottom: 20px;">
                         <button class="btn-primary">📖 Baca Sekarang</button>
+                        </div>
+
+                    <div class="personal-notes-section">
+                        <h4><i class="fas fa-pencil-alt"></i> Catatan Pribadi</h4>
+                        <p style="font-size: 0.85rem; color: #888; margin-bottom: 8px;">
+                            Tulis insight atau poin penting yang kamu dapat dari buku ini:
+                        </p>
+                        <textarea id="noteInput" placeholder="Contoh: Bab 1 mengajarkan tentang pentingnya disiplin..."></textarea>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+                            <button id="saveNoteBtn" class="btn-save-note">
+                                <i class="fas fa-save"></i> Simpan Catatan
+                            </button>
+                            <span id="saveStatus" style="display: none; color: #27ae60; font-weight: 600; font-size: 0.9rem;">
+                                <i class="fas fa-check-circle"></i> Tersimpan!
+                            </span>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

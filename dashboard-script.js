@@ -1,20 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- 1. CEK AUTENTIKASI ---
-    const user = localStorage.getItem('currentUser');
-    if (!user) {
+    const currentUser = localStorage.getItem('currentUser'); 
+    if (!currentUser) {
         window.location.href = 'index.html';
         return;
     }
     
-    // Kunci Penyimpanan Khusus User
-    const SAVED_KEY = `savedBooks_${user}`;
+    const SAVED_KEY = `savedBooks_${currentUser}`;
 
     // Tampilkan Nama & Foto
     const userDisplay = document.getElementById('userDisplay');
-    if(userDisplay) userDisplay.innerText = `Halo, ${user} 👋`;
+    if(userDisplay) userDisplay.innerText = `Halo, ${currentUser} 👋`;
 
-    const savedPhoto = localStorage.getItem(`profilePic_${user}`);
+    const savedPhoto = localStorage.getItem(`profilePic_${currentUser}`);
     const navAvatar = document.querySelector('.profile-trigger .avatar');
     if (savedPhoto && navAvatar) navAvatar.src = savedPhoto;
 
@@ -88,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
 
-    // --- 4. RENDER BUKU ---
+    // --- 4. RENDER BUKU DENGAN WARNA WARNI (HSL) ---
     const bookList = document.getElementById('bookList');
     const searchBar = document.getElementById('searchBook');
     const categoryBtns = document.querySelectorAll('.btn-cat');
@@ -97,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bookList.innerHTML = '';
         
         if (data.length === 0) {
-            // Pesan Beda kalau di menu Tersimpan vs Menu Biasa
             const emptyMsg = isSavedView 
                 ? "Belum ada buku yang kamu simpan. Yuk mulai koleksi! 📚" 
                 : "Buku tidak ditemukan...";
@@ -112,15 +110,32 @@ document.addEventListener('DOMContentLoaded', () => {
         data.forEach(book => {
             const card = document.createElement('div');
             card.className = 'book-card';
+            
+            // --- LOGIKA WARNA WARNI DI SINI ---
+            const hue = Math.floor(Math.random() * 360); // Acak warna (0-360 derajat)
+            
+            // 1. Background Pastel (Lightness 96% - Sangat Terang)
+            const pastelBg = `hsl(${hue}, 75%, 96%)`; 
+            
+            // 2. Warna Aksen (Lightness 45% - Gelap) untuk Tag & Border
+            const accentColor = `hsl(${hue}, 70%, 45%)`;
+            
+            // 3. Border Halus (Lightness 85%)
+            const borderColor = `hsl(${hue}, 60%, 85%)`;
+
+            // Terapkan ke kartu
+            card.style.background = pastelBg;
+            card.style.borderColor = borderColor;
+
             const imgSrc = book.img || book.image; 
             
             card.innerHTML = `
                 <img src="${imgSrc}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Cover'">
                 <div class="book-info">
-                    <h3>${book.title}</h3>
-                    <p>${book.author}</p>
+                    <h3 style="color: #222;">${book.title}</h3>
+                    <p style="color: #444;">${book.author}</p>
                     <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center;">
-                         <span class="tag">${book.category}</span>
+                         <span class="tag" style="background: ${accentColor};">${book.category}</span>
                          <span class="mini-rating">⭐ ${book.rating}</span>
                     </div>
                 </div>
@@ -130,10 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Render Awal (Semua Buku)
-    renderBooks(allBooks);
+    renderBooks(allBooks); // Render pertama kali
 
-    // --- 5. SEARCH & FILTER (UPDATE: FITUR TERSIMPAN) ---
+    // --- 5. SEARCH & FILTER ---
     if (searchBar) {
         searchBar.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
@@ -146,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Reset Active Class
             categoryBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -155,29 +168,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cat === 'all') {
                 renderBooks(allBooks);
             } else if (cat === 'saved') {
-                // LOGIKA KHUSUS: Ambil buku dari LocalStorage
                 const mySaved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
-                renderBooks(mySaved, true); // True = mode tersimpan
+                renderBooks(mySaved, true);
             } else {
-                // Logika Filter Biasa
                 renderBooks(allBooks.filter(b => b.category === cat));
             }
         });
     });
 
-    // --- 6. MODAL & LOGIKA SIMPAN ---
+    // --- 6. MODAL DETAIL, TOMBOL SIMPAN & CATATAN PRIBADI ---
     const modal = document.getElementById('detailModal');
 
     function openModal(book) {
         if (!modal) return;
         
+        // Isi Data Modal
         document.getElementById('modalImg').src = book.img || book.image;
         document.getElementById('modalTitle').innerText = book.title;
         document.getElementById('modalAuthor').innerText = book.author;
         document.getElementById('modalCategory').innerText = book.category;
         document.getElementById('modalRating').innerText = book.rating;
 
-        // Tombol Baca
+        // Reset & Update Tombol Baca
         const btnRead = document.querySelector('.btn-primary');
         if (btnRead) {
             const newBtnRead = btnRead.cloneNode(true);
@@ -189,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
-        // Tombol Simpan
+        // Logic Tombol Bookmark
         let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
         const isSaved = savedList.some(item => item.id === book.id);
         
@@ -199,69 +211,63 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const btnSave = document.createElement('button');
         btnSave.className = 'btn-save-custom'; 
-        
-        btnSave.style.cssText = `
-            margin-left: 15px;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            border: 2px solid transparent;
-        `;
+        btnSave.style.cssText = `margin-left: 15px; padding: 12px 25px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 1rem; border: 2px solid transparent;`;
 
         const updateButtonStyle = (saved) => {
             if (saved) {
                 btnSave.innerHTML = '<i class="fas fa-check-circle"></i> Tersimpan';
                 btnSave.style.background = 'var(--primary)';
                 btnSave.style.color = 'white';
-                btnSave.style.boxShadow = '0 0 20px rgba(0, 180, 216, 0.6)';
-                btnSave.style.borderColor = 'var(--primary)';
-                btnSave.style.transform = 'scale(1.05)';
             } else {
                 btnSave.innerHTML = '<i class="far fa-bookmark"></i> Simpan ke Koleksi';
                 btnSave.style.background = 'transparent';
                 btnSave.style.color = 'var(--primary)';
-                btnSave.style.boxShadow = 'none';
                 btnSave.style.borderColor = 'var(--primary)';
-                btnSave.style.transform = 'scale(1)';
             }
         };
 
         updateButtonStyle(isSaved);
 
         btnSave.onclick = () => {
-            btnSave.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
-                const index = savedList.findIndex(item => item.id === book.id);
-
-                if (index !== -1) {
-                    savedList.splice(index, 1);
-                    localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
-                    updateButtonStyle(false);
-                    showToast('Dihapus dari koleksi.');
-                    
-                    // FITUR TAMBAHAN: Kalau lagi di tab "Tersimpan", langsung refresh listnya
-                    const activeBtn = document.querySelector('.btn-cat.active');
-                    if (activeBtn && activeBtn.getAttribute('data-cat') === 'saved') {
-                        renderBooks(savedList, true);
-                    }
-
-                } else {
-                    savedList.push(book);
-                    localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
-                    updateButtonStyle(true);
-                    showToast('Berhasil disimpan! 🎉');
+            savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+            const index = savedList.findIndex(item => item.id === book.id);
+            if (index !== -1) {
+                savedList.splice(index, 1);
+                localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
+                updateButtonStyle(false);
+                showToast('Dihapus dari koleksi.');
+                if (document.querySelector('.btn-cat.active').getAttribute('data-cat') === 'saved') {
+                    renderBooks(savedList, true);
                 }
-            }, 100);
+            } else {
+                savedList.push(book);
+                localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
+                updateButtonStyle(true);
+                showToast('Berhasil disimpan! 🎉');
+            }
+        };
+        btnContainer.appendChild(btnSave);
+
+        // --- FITUR CATATAN PRIBADI (LOAD & SAVE) ---
+        const noteInput = document.getElementById('noteInput');
+        const saveNoteBtn = document.getElementById('saveNoteBtn');
+        const saveStatus = document.getElementById('saveStatus');
+
+        // Buat ID unik catatan: note_emailUser_idBuku
+        const noteKey = `note_${currentUser}_${book.id}`;
+        
+        // Load catatan lama
+        const existingNote = localStorage.getItem(noteKey);
+        noteInput.value = existingNote ? existingNote : '';
+        saveStatus.style.display = 'none';
+
+        // Simpan catatan baru
+        saveNoteBtn.onclick = () => {
+            localStorage.setItem(noteKey, noteInput.value);
+            saveStatus.style.display = 'inline';
+            setTimeout(() => { saveStatus.style.display = 'none'; }, 2000);
         };
 
-        btnContainer.appendChild(btnSave);
         modal.classList.add('active');
     }
 
@@ -273,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dropdown && !e.target.closest('.profile-trigger')) dropdown.classList.remove('active');
     };
 
-    // Navigasi
+    // Navigasi Profil
     const trigger = document.getElementById('profileTrigger');
     const dropdown = document.getElementById('profileDropdown');
     if(trigger) {
