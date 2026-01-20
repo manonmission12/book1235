@@ -3,18 +3,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 90vh; /* Full height minus navbar */
+    min-height: 90vh;
     padding: 2rem;
 }
 
-/* CONTAINER UTAMA (TANPA BOX) */
 .split-container {
     display: flex;
     width: 100%;
     max-width: 1100px;
     min-height: 550px;
-    
-    /* Membuat container jadi transparan total */
     background: transparent;
     border: none;
     backdrop-filter: none;
@@ -22,40 +19,36 @@
     border-radius: 0;
 }
 
-/* --- BAGIAN KIRI (TEKS WELCOME) --- */
+/* --- BAGIAN KIRI (TEKS) --- */
 .welcome-text-section {
     flex: 1;
     padding: 4rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: transparent; /* Hapus background gradient */
+    background: transparent;
 }
 
 .welcome-text-section h1 {
-    font-size: 3.5rem; /* Lebih besar biar gagah */
+    font-size: 3.5rem;
     margin-bottom: 1rem;
-    font-weight: 800;
-    /* Gradient Teks */
+    font-weight: 700; /* Turun dari 800 (Extra Bold) ke 700 (Bold) */
     background: linear-gradient(to right, #fff, var(--primary));
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; 
-    background-clip: text;
-    color: white; /* Fallback */
-    
-    /* Shadow teks biar pop-up dari background */
+    -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
 }
 
 .welcome-text-section p {
-    color: rgba(255,255,255,0.95);
+    color: rgba(255,255,255,0.9);
     line-height: 1.6;
-    font-size: 1.2rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* Shadow hitam di teks */
+    font-size: 1.15rem;
+    font-weight: 400; /* Regular, biar enak dibaca */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     max-width: 90%;
 }
 
-/* --- BAGIAN KANAN (FORM LOGIN/DAFTAR) --- */
+/* --- BAGIAN KANAN (FORM) --- */
 .login-form-section {
     flex: 1;
     padding: 4rem;
@@ -65,38 +58,35 @@
     background: transparent;
 }
 
-/* Judul Form */
 .login-form-section h2 {
     font-size: 2rem;
     margin-bottom: 30px;
     color: white;
+    font-weight: 600; /* Turun jadi Semi-Bold biar gak terlalu berat */
     text-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-.input-group {
-    margin-bottom: 1.5rem;
-}
+.input-group { margin-bottom: 1.5rem; }
 
 .input-group label {
     display: block;
     margin-bottom: 0.8rem;
     font-size: 0.95rem;
-    color: #f0f0f0; /* Warna lebih terang */
-    font-weight: 600;
+    color: #f0f0f0;
+    font-weight: 500; /* Turun dari 600 ke 500 (Medium) -> Jauh lebih rapi */
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
-/* Input Field (Dibuat Semi-Transparan Gelap) */
 .input-group input {
     width: 100%;
     padding: 16px 22px;
     border-radius: 15px;
-    /* Background gelap transparan supaya teks input terbaca */
     background: rgba(0, 0, 0, 0.5); 
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     font-size: 1rem;
+    font-weight: 400; /* Regular */
     outline: none;
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
@@ -109,27 +99,17 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-.input-group input::placeholder {
-    color: rgba(255,255,255,0.4);
-}
+.input-group input::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
 
-/* Password Eye Icon */
 .password-container { position: relative; width: 100%; }
 .password-container input { padding-right: 45px; }
 
 .eye-icon { 
-    position: absolute; 
-    right: 15px; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    cursor: pointer; 
-    opacity: 0.8; 
-    color: white;
-    transition: 0.3s;
+    position: absolute; right: 15px; top: 50%; transform: translateY(-50%); 
+    cursor: pointer; opacity: 0.8; color: white; transition: 0.3s;
 }
 .eye-icon:hover { opacity: 1; transform: translateY(-50%) scale(1.1); }
 
-/* Tombol Login/Daftar */
 .login-button {
     width: 100%;
     padding: 18px;
@@ -137,7 +117,7 @@
     border: none;
     border-radius: 15px;
     color: white;
-    font-weight: 800;
+    font-weight: 600; /* Semi-Bold, cukup tegas tapi gak "teriak" */
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 1rem;
@@ -153,19 +133,19 @@
     filter: brightness(1.1);
 }
 
-/* Link Helper (Belum punya akun?) */
 .auth-helper {
     text-align: center;
     margin-top: 25px;
     font-size: 0.95rem;
     color: #ddd;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    font-weight: 400;
 }
 
 .auth-helper a {
     color: var(--primary);
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600; /* Sedikit tebal untuk link */
     border-bottom: 2px solid transparent;
     transition: 0.3s;
 }
@@ -177,25 +157,9 @@
 
 /* --- RESPONSIVE MOBILE (HP) --- */
 @media (max-width: 768px) {
-    .main-content-wrapper {
-        padding: 15px;
-        align-items: flex-start;
-        padding-top: 40px;
-    }
-
-    .split-container {
-        flex-direction: column; /* Tumpuk atas bawah */
-    }
-    
-    .welcome-text-section {
-        padding: 2rem 1rem;
-        text-align: center;
-        align-items: center;
-    }
-    
+    .main-content-wrapper { padding: 15px; align-items: flex-start; padding-top: 40px; }
+    .split-container { flex-direction: column; }
+    .welcome-text-section { padding: 2rem 1rem; text-align: center; align-items: center; }
     .welcome-text-section h1 { font-size: 2.5rem; }
-    
-    .login-form-section {
-        padding: 1rem;
-    }
+    .login-form-section { padding: 1rem; }
 }

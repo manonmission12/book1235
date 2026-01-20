@@ -1,3 +1,6 @@
+/* --- IMPOR FONT INTER (Supaya tidak tebal palsu) --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
     --primary: #00b4d8;
     --glass: rgba(255, 255, 255, 0.08);
@@ -10,11 +13,16 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
 body { 
-    background: var(--bg-dark); color: white; min-height: 100vh;
+    background: var(--bg-dark); 
+    color: white; 
+    min-height: 100vh;
     background-image: radial-gradient(circle at top right, #0077b622, transparent),
                       linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
                       url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000');
     background-attachment: fixed; background-size: cover;
+    
+    /* Font Weight Standar (Regular) */
+    font-weight: 400; 
     
     /* ANIMASI MASUK HALAMAN */
     animation: pageFadeIn 0.8s ease-out;
@@ -34,17 +42,22 @@ body {
     border-bottom: 1px solid var(--glass-border);
 }
 
-/* --- BAGIAN YANG DIUBAH (BRAND LOGO) --- */
 .brand {
     font-size: 1.5rem; 
-    font-weight: 800; 
-    color: white; /* Putih Polos */
+    font-weight: 700; /* Turun dari 800 ke 700 */
+    color: white; 
     text-decoration: none;
-    /* Efek gradasi dihapus agar bersih */
 }
 
 .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; height: 100%; }
-.nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; position: relative; }
+.nav-links a { 
+    color: rgba(255,255,255,0.7); 
+    text-decoration: none; 
+    font-weight: 500; /* Turun dari 600 ke 500 (Medium) */
+    font-size: 0.95rem; 
+    transition: 0.3s; 
+    position: relative; 
+}
 .nav-links a:hover, .nav-links a.active { color: white; }
 .nav-links a.active::after {
     content: ''; position: absolute; bottom: -28px; left: 0; width: 100%; height: 3px; background: var(--primary);
@@ -64,11 +77,11 @@ body {
 .dropdown-menu.active { display: flex; animation: fadeIn 0.2s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-.dropdown-item { padding: 12px 20px; color: #ccc; text-decoration: none; background: none; border: none; text-align: left; cursor: pointer; transition: 0.2s; width: 100%; font-size: 0.9rem; }
+.dropdown-item { padding: 12px 20px; color: #ccc; text-decoration: none; background: none; border: none; text-align: left; cursor: pointer; transition: 0.2s; width: 100%; font-size: 0.9rem; font-weight: 400; }
 .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 .dropdown-divider { height: 1px; background: var(--glass-border); margin: 5px 0; }
 
-/* --- CUSTOM TOAST NOTIFICATION --- */
+/* --- TOAST --- */
 #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
 .toast {
     min-width: 250px; padding: 16px 20px; border-radius: 12px;
@@ -76,18 +89,13 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     border-left: 5px solid var(--primary);
     backdrop-filter: blur(10px); display: flex; align-items: center;
-    animation: slideIn 0.3s ease-out forwards; font-size: 0.9rem; font-weight: 500;
+    animation: slideIn 0.3s ease-out forwards; font-size: 0.9rem; 
+    font-weight: 500; /* Medium, pas, gak ketebelan */
 }
 .toast.success { border-left-color: var(--success); }
 .toast.error { border-left-color: var(--danger); }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes slideOut { to { transform: translateX(100%); opacity: 0; } }
 
-/* --- FILTER KATEGORI (Backup jika dashboard.css gagal load) --- */
-/* Ini style dasar tombol kategori, style utamanya ada di dashboard.css */
-.category-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-.btn-cat {
-    padding: 8px 20px; border-radius: 20px; border: 1px solid var(--glass-border);
-    background: var(--glass); color: rgba(255,255,255,0.7); cursor: pointer; transition: 0.3s;
-}
-.btn-cat:hover, .btn-cat.active { background: var(--primary); color: white; border-color: var(--primary); }
+/* BUTTON STYLE */
+button { font-family: 'Inter', sans-serif; }
