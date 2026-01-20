@@ -1,51 +1,201 @@
-.main-content-wrapper { display: flex; justify-content: center; align-items: center; min-height: 90vh; padding: 2rem; }
-.split-container { display: flex; width: 100%; max-width: 1000px; min-height: 550px; background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 2rem; overflow: hidden; }
+/* --- LAYOUT UTAMA --- */
+.main-content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh; /* Full height minus navbar */
+    padding: 2rem;
+}
 
-.welcome-text-section { flex: 1; padding: 4rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), transparent); }
-.welcome-text-section h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-.welcome-text-section p { color: rgba(255,255,255,0.6); line-height: 1.6; }
+/* CONTAINER UTAMA (TANPA BOX) */
+.split-container {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 550px;
+    
+    /* Membuat container jadi transparan total */
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    border-radius: 0;
+}
 
-.login-form-section { flex: 1; padding: 4rem; background: rgba(255, 255, 255, 0.03); display: flex; flex-direction: column; justify-content: center; }
-.input-group { margin-bottom: 1.5rem; }
-.input-group label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: var(--primary); font-weight: 600; }
-.input-group input { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 12px; color: white; outline: none; transition: 0.3s; }
+/* --- BAGIAN KIRI (TEKS WELCOME) --- */
+.welcome-text-section {
+    flex: 1;
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: transparent; /* Hapus background gradient */
+}
 
+.welcome-text-section h1 {
+    font-size: 3.5rem; /* Lebih besar biar gagah */
+    margin-bottom: 1rem;
+    font-weight: 800;
+    /* Gradient Teks */
+    background: linear-gradient(to right, #fff, var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    background-clip: text;
+    color: white; /* Fallback */
+    
+    /* Shadow teks biar pop-up dari background */
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+}
+
+.welcome-text-section p {
+    color: rgba(255,255,255,0.95);
+    line-height: 1.6;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* Shadow hitam di teks */
+    max-width: 90%;
+}
+
+/* --- BAGIAN KANAN (FORM LOGIN/DAFTAR) --- */
+.login-form-section {
+    flex: 1;
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: transparent;
+}
+
+/* Judul Form */
+.login-form-section h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: white;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    color: #f0f0f0; /* Warna lebih terang */
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 0.5px;
+}
+
+/* Input Field (Dibuat Semi-Transparan Gelap) */
+.input-group input {
+    width: 100%;
+    padding: 16px 22px;
+    border-radius: 15px;
+    /* Background gelap transparan supaya teks input terbaca */
+    background: rgba(0, 0, 0, 0.5); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    background: rgba(0, 0, 0, 0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+
+.input-group input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+
+/* Password Eye Icon */
 .password-container { position: relative; width: 100%; }
 .password-container input { padding-right: 45px; }
-.eye-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; opacity: 0.6; }
 
-.login-button { width: 100%; padding: 14px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; transition: 0.3s; }
-.login-button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 180, 216, 0.3); }
-.auth-helper { text-align: center; margin-top: 20px; font-size: 14px; color: #aaa; }
-.auth-helper a { color: var(--primary); text-decoration: none; font-weight: bold; }
+.eye-icon { 
+    position: absolute; 
+    right: 15px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    cursor: pointer; 
+    opacity: 0.8; 
+    color: white;
+    transition: 0.3s;
+}
+.eye-icon:hover { opacity: 1; transform: translateY(-50%) scale(1.1); }
+
+/* Tombol Login/Daftar */
+.login-button {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--primary), #48cae4);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 180, 216, 0.3);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.login-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 180, 216, 0.5);
+    filter: brightness(1.1);
+}
+
+/* Link Helper (Belum punya akun?) */
+.auth-helper {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.95rem;
+    color: #ddd;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.auth-helper a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.auth-helper a:hover {
+    color: #48cae4;
+    border-bottom-color: #48cae4;
+}
 
 /* --- RESPONSIVE MOBILE (HP) --- */
 @media (max-width: 768px) {
     .main-content-wrapper {
         padding: 15px;
-        align-items: flex-start; /* Biar scroll enak */
+        align-items: flex-start;
+        padding-top: 40px;
     }
 
     .split-container {
-        flex-direction: column; /* Ubah dari samping-sampingan jadi atas-bawah */
-        max-width: 100%;
-        min-height: auto;
-        border-radius: 20px;
+        flex-direction: column; /* Tumpuk atas bawah */
     }
-
-    /* Sembunyikan bagian teks "Welcome" di HP agar hemat tempat */
-    /* Atau kalau mau tetap ada, kurangi paddingnya */
+    
     .welcome-text-section {
-        padding: 30px;
-        flex: 0; /* Jangan ambil banyak tempat */
+        padding: 2rem 1rem;
         text-align: center;
+        align-items: center;
     }
-
-    .welcome-text-section h1 {
-        font-size: 1.8rem;
-    }
-
+    
+    .welcome-text-section h1 { font-size: 2.5rem; }
+    
     .login-form-section {
-        padding: 30px 20px;
+        padding: 1rem;
     }
 }

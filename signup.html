@@ -17,25 +17,31 @@
 
     <main class="main-content-wrapper">
         <div class="split-container">
+            
             <section class="welcome-text-section">
                 <h1>Mulai Perjalananmu.</h1>
-                <p>Simpan koleksi buku favoritmu dan akses dari perangkat mana saja, kapan saja.</p>
+                <p>Buat akun sekarang. Simpan koleksi buku favoritmu dan akses dari perangkat mana saja.</p>
             </section>
+            
             <section class="login-form-section">
-                <form class="signup-form">
-                    <h2>Buat Akun</h2>
+                <form class="signup-form" id="signupForm">
+                    <h2>Buat Akun Baru</h2>
+                    
                     <div class="input-group">
                         <label>Username</label>
-                        <input type="text" id="newUsername" required placeholder="Pilih Username">
+                        <input type="text" id="newUsername" required placeholder="Pilih Username Unik">
                     </div>
+                    
                     <div class="input-group">
                         <label>Password</label>
-                        <input type="password" id="newPassword" required placeholder="Buat Password">
+                        <input type="password" id="newPassword" required placeholder="Buat Password Kuat">
                     </div>
+                    
                     <div class="input-group">
                         <label>Ulangi Password</label>
-                        <input type="password" id="confirmPassword" required placeholder="Ulangi Password">
+                        <input type="password" id="confirmPassword" required placeholder="Konfirmasi Password">
                     </div>
+                    
                     <button type="submit" class="login-button">Daftar Akun</button>
                     
                     <p class="auth-helper">Sudah punya akun? <a href="index.html">Login di sini</a></p>
@@ -43,6 +49,7 @@
             </section>
         </div>
     </main>
+    
     <script src="signup-script.js"></script>
 </body>
 </html>
