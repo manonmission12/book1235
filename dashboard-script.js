@@ -5,23 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const root = document.documentElement;
     const icon = themeToggle.querySelector('i');
 
-    // Cek LocalStorage saat pertama kali load
+    // Cek LocalStorage saat load
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         root.setAttribute('data-theme', 'dark');
         icon.classList.replace('fa-moon', 'fa-sun');
     }
 
-    // Event Listener Tombol
+    // Event Listener Tombol Toggle
     themeToggle.addEventListener('click', () => {
         const currentTheme = root.getAttribute('data-theme');
         if (currentTheme === 'dark') {
-            // Pindah ke Light
             root.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');
             icon.classList.replace('fa-sun', 'fa-moon');
         } else {
-            // Pindah ke Dark
             root.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
             icon.classList.replace('fa-moon', 'fa-sun');
@@ -79,22 +77,24 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(container);
         }
         const toast = document.createElement('div');
-        const bg = type === 'success' ? '#27ae60' : '#c0392b';
+        // Warna toast tetap hitam putih
         
         toast.style.cssText = `
-            background: #222; color: #fff; padding: 12px 20px; border-radius: 8px;
+            background: var(--text-primary); color: var(--bg-card); 
+            padding: 12px 20px; border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: 'Inter', sans-serif; 
-            font-size: 0.9rem; font-weight: 500; border-left: 4px solid ${bg};
+            font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border);
             display: flex; align-items: center; gap: 10px;
             animation: fadeIn 0.3s forwards;
         `;
         
-        toast.innerHTML = `<i class="fas ${type==='success'?'fa-check':'fa-exclamation-circle'}" style="color:${bg}"></i> <span>${msg}</span>`;
+        const icon = type === 'success' ? '✅' : '⚠️';
+        toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     };
 
-    // --- 4. RENDER FUNCTION (BERSIH - TANPA WARNA WARNI) ---
+    // --- 4. RENDER FUNCTION ---
     const bookList = document.getElementById('bookList');
     const searchBar = document.getElementById('searchBook');
     const categoryBtns = document.querySelectorAll('.btn-cat');
@@ -114,8 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'book-card';
             
-            // HAPUS SEMUA LOGIKA WARNA RANDOM DI SINI
-            // Warna sekarang diatur otomatis oleh CSS Variable (--bg-card)
+            // HAPUS SEMUA LOGIKA WARNA RANDOM
 
             const imgSrc = book.img || book.image; 
             
@@ -177,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalCategory').innerText = book.category;
         document.getElementById('modalRating').innerText = book.rating;
         
-        // Actions Button
         const btnContainer = document.querySelector('.modal-actions');
         btnContainer.innerHTML = ''; 
 
@@ -192,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         btnContainer.appendChild(btnRead);
 
-        // Save Button
+        // Save Button (Monochrome Style)
         let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
         const isSaved = savedList.some(item => item.id === book.id);
         
@@ -201,8 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateSaveBtn = (saved) => {
             btnSave.className = 'btn-primary'; 
             btnSave.style.background = 'transparent';
-            btnSave.style.border = '1px solid var(--text-secondary)';
-            btnSave.style.color = saved ? '#27ae60' : 'var(--text-secondary)';
+            btnSave.style.border = '1px solid var(--text-primary)';
+            btnSave.style.color = 'var(--text-primary)';
+            // Teks saja yang berubah
             btnSave.innerHTML = saved ? '<i class="fas fa-check"></i> Tersimpan' : '<i class="far fa-bookmark"></i> Simpan';
         };
         updateSaveBtn(isSaved);

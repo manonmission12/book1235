@@ -1,40 +1,54 @@
-/* --- 1. SETUP VARIABLES (MONOCHROME & CLEAN) --- */
+/* --- 1. SETUP VARIABLES (STRICT MONOCHROME) --- */
 :root {
     /* === LIGHT MODE (DEFAULT) === */
-    --bg-body: #f8f9fa;      /* Abu sangat muda (background halaman) */
-    --bg-card: #ffffff;      /* Putih (kartu) */
+    --bg-body: #f8f9fa;      
+    --bg-card: #ffffff;      
     --bg-input: #ffffff;
     --bg-modal: #ffffff;
     
-    --text-primary: #111111;    /* Hitam Pekat */
-    --text-secondary: #555555;  /* Abu Gelap */
+    --text-primary: #111111;    /* Hitam Utama */
+    --text-secondary: #666666;  /* Abu Gelap */
     --text-tertiary: #999999;
     
-    --border: #e0e0e0;          /* Border halus */
-    --shadow: 0 4px 6px rgba(0,0,0,0.05); /* Bayangan halus */
+    --border: #e0e0e0;          
+    --border-hover: #111111;    
     
-    --accent: #111111;          /* Aksen utama Hitam di Light Mode */
-    --tag-bg: #f0f0f0;          /* Background tag abu muda */
+    --shadow: 0 4px 6px rgba(0,0,0,0.05);
+    
     --nav-bg: rgba(255, 255, 255, 0.95);
+    
+    /* Tombol & Aksen (Hitam di Light Mode) */
+    --btn-bg: #111111;
+    --btn-text: #ffffff;
+    --btn-hover: #333333;
+    
+    --tag-bg: #f3f3f3;
 }
 
 /* === DARK MODE === */
 [data-theme="dark"] {
-    --bg-body: #121212;      /* Hitam (background halaman) */
-    --bg-card: #1e1e1e;      /* Abu Gelap/Hitam (kartu) */
+    --bg-body: #121212;      
+    --bg-card: #1e1e1e;      
     --bg-input: #2d2d2d;
     --bg-modal: #1e1e1e;
 
-    --text-primary: #ffffff;    /* Putih */
-    --text-secondary: #b0b0b0;  /* Abu Terang */
+    --text-primary: #ffffff;    /* Putih Utama */
+    --text-secondary: #b0b0b0;  
     --text-tertiary: #666666;
 
-    --border: #333333;          /* Border gelap */
+    --border: #333333;          
+    --border-hover: #ffffff;    
+    
     --shadow: 0 10px 20px rgba(0,0,0,0.3);
 
-    --accent: #ffffff;          /* Aksen utama Putih di Dark Mode */
-    --tag-bg: #333333;          /* Background tag abu gelap */
     --nav-bg: rgba(18, 18, 18, 0.95);
+    
+    /* Tombol & Aksen (Putih di Dark Mode) */
+    --btn-bg: #ffffff;
+    --btn-text: #000000;
+    --btn-hover: #e0e0e0;
+    
+    --tag-bg: #333333;
 }
 
 /* --- 2. GLOBAL STYLES --- */
@@ -44,7 +58,7 @@ body {
     color: var(--text-primary);
     margin: 0; padding: 0;
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transisi Halus */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, .brand {
@@ -67,7 +81,6 @@ h1, h2, h3, h4, .brand {
     font-size: 1.3rem; color: var(--text-primary);
     text-decoration: none; display: flex; align-items: center; gap: 10px;
 }
-/* Ikon brand mengikuti warna teks utama (Hitam/Putih) */
 .brand i { color: var(--text-primary); } 
 
 .nav-right { display: flex; align-items: center; gap: 15px; }
@@ -105,8 +118,8 @@ h1, h2, h3, h4, .brand {
     border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 10px;
 }
 .dropdown-item:hover { background: var(--border); color: var(--text-primary); }
-.dropdown-item.logout { color: #e74c3c; }
-.dropdown-item.logout:hover { background: rgba(231, 76, 60, 0.1); }
+.dropdown-item.logout { color: var(--text-primary); } /* Logout jadi hitam/putih juga */
+.dropdown-item.logout:hover { background: var(--border); }
 .dropdown-divider { height: 1px; background: var(--border); margin: 5px 0; }
 
 /* --- 4. HEADER & SEARCH --- */
@@ -127,7 +140,7 @@ h1, h2, h3, h4, .brand {
     outline: none; transition: 0.3s; font-family: inherit;
     box-shadow: var(--shadow);
 }
-.search-box input:focus { border-color: var(--text-primary); } /* Fokus jadi hitam/putih */
+.search-box input:focus { border-color: var(--text-primary); }
 .search-box input::placeholder { color: var(--text-tertiary); }
 
 /* --- 5. TABS & GRID --- */
@@ -141,23 +154,24 @@ h1, h2, h3, h4, .brand {
 .btn-cat:hover, .btn-cat.active { 
     background: var(--text-primary); color: var(--bg-card); border-color: var(--text-primary); 
 }
-/* Saved Tab - Sedikit aksen */
-.saved-tab { color: #6c5ce7; border-color: #6c5ce7; }
-.saved-tab:hover, .saved-tab.active { background: #6c5ce7; color: white; border-color: #6c5ce7; }
+/* Saved Tab juga jadi Monokrom */
+.saved-tab { color: var(--text-primary); border-color: var(--text-primary); }
+.saved-tab:hover, .saved-tab.active { background: var(--text-primary); color: var(--bg-card); }
 
 .btn-upload-inline {
-    background: var(--text-primary); /* Hitam/Putih Solid */
-    color: var(--bg-card); padding: 8px 20px; border-radius: 8px;
+    background: var(--btn-bg);
+    color: var(--btn-text); 
+    padding: 8px 20px; border-radius: 8px;
     font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px;
     font-size: 0.9rem; transition: 0.3s;
 }
-.btn-upload-inline:hover { opacity: 0.8; transform: translateY(-2px); }
+.btn-upload-inline:hover { background: var(--btn-hover); transform: translateY(-2px); }
 
 .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
 
-/* --- 6. BOOK CARD (MONOCHROME LOGIC) --- */
+/* --- 6. BOOK CARD (MONOCHROME) --- */
 .book-card {
-    background: var(--bg-card); /* Putih di Light, Hitam di Dark */
+    background: var(--bg-card);
     border-radius: 12px; overflow: hidden;
     border: 1px solid var(--border); 
     transition: all 0.3s ease;
@@ -167,14 +181,15 @@ h1, h2, h3, h4, .brand {
 
 .book-card:hover { 
     transform: translateY(-5px); 
-    border-color: var(--text-primary); /* Border jadi tegas saat hover */
+    border-color: var(--border-hover); /* Border jadi kontras saat hover */
 }
 
 .book-card img {
     width: 100%; height: 260px; object-fit: cover;
     border-bottom: 1px solid var(--border); opacity: 1; transition: 0.3s;
 }
-[data-theme="dark"] .book-card img { opacity: 0.85; } /* Redupkan gambar sedikit di dark mode */
+/* Sedikit redup di dark mode supaya tidak silau */
+[data-theme="dark"] .book-card img { opacity: 0.85; border-bottom: 1px solid #333; } 
 .book-card:hover img { opacity: 1; }
 
 .book-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; }
@@ -182,7 +197,7 @@ h1, h2, h3, h4, .brand {
 .book-info h3 {
     font-size: 1rem; line-height: 1.4; color: var(--text-primary);
     margin-bottom: 6px;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-clamp: 2;
     overflow: hidden; text-overflow: ellipsis;
 }
 .book-info p {
@@ -191,14 +206,14 @@ h1, h2, h3, h4, .brand {
 
 .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
 
-/* Tag Monochrome */
+/* Tag Hitam Putih */
 .tag {
     font-size: 0.7rem; padding: 4px 10px; border-radius: 4px;
     background: var(--tag-bg); color: var(--text-primary); 
     font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     border: 1px solid var(--border);
 }
-.mini-rating { font-size: 0.85rem; color: #f39c12; font-weight: 700; }
+.mini-rating { font-size: 0.85rem; color: var(--text-primary); font-weight: 700; } /* Bintang ikut warna teks */
 
 /* --- 7. MODAL --- */
 .modal-overlay {
@@ -228,23 +243,30 @@ h1, h2, h3, h4, .brand {
 
 .modal-badges { display: flex; gap: 10px; margin-bottom: 15px; }
 .badge-cat { background: var(--tag-bg); color: var(--text-primary); padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border:1px solid var(--border); }
-.badge-rate { color: #f39c12; font-weight: 700; font-size: 0.9rem; }
+.badge-rate { color: var(--text-primary); font-weight: 700; font-size: 0.9rem; }
 
 #modalTitle { font-size: 2rem; line-height: 1.2; margin-bottom: 5px; color: var(--text-primary); }
 .modal-author { color: var(--text-secondary); font-size: 1rem; margin-bottom: 25px; }
 
+.modal-desc-box { 
+    margin-bottom: 30px; line-height: 1.7; font-size: 0.95rem; color: var(--text-secondary); 
+}
+
 .modal-actions { display: flex; gap: 15px; margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid var(--border); }
+
+/* Tombol Primary (Baca Sekarang) - Warna Kontras */
 .btn-primary {
-    background: var(--text-primary); color: var(--bg-card); border: none;
+    background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-bg);
     padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer;
     transition: 0.2s; font-size: 0.95rem;
 }
-.btn-primary:hover { opacity: 0.8; transform: translateY(-2px); }
+.btn-primary:hover { background: var(--btn-hover); border-color: var(--btn-hover); }
 
 /* Note Section */
 .notes-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .notes-header h4 { font-size: 1rem; color: var(--text-primary); }
-.save-indicator { font-size: 0.8rem; color: #27ae60; font-weight: 600; display: none; }
+/* Indikator simpan jadi teks biasa saja agar monokrom */
+.save-indicator { font-size: 0.8rem; color: var(--text-primary); font-weight: 600; display: none; text-decoration: underline; }
 
 #noteInput {
     width: 100%; height: 100px; background: var(--bg-input);
@@ -261,7 +283,7 @@ h1, h2, h3, h4, .brand {
 .btn-save-note:hover { background: var(--text-primary); color: var(--bg-card); }
 
 .close-btn { position: absolute; top: 20px; right: 25px; font-size: 2rem; color: var(--text-tertiary); cursor: pointer; z-index: 10; }
-.close-btn:hover { color: #e74c3c; }
+.close-btn:hover { color: var(--text-primary); }
 
 @media (max-width: 768px) {
     .modal-body { flex-direction: column; }

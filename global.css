@@ -21,14 +21,7 @@ body {
     background: var(--bg-light); 
     color: var(--text-main); 
     min-height: 100vh;
-    
-    /* --- BACKGROUND MERIAH BERGERAK --- */
-    /* Kita pakai 4 warna pastel dan membuatnya ukurannya 400% */
-    background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #90f7ec, #ff9a9e);
-    background-size: 400% 400%;
-    /* Animasi berjalan selama 15 detik tanpa henti */
-    animation: gradientBG 3s ease infinite;
-    font-weight: 400;
+    background: white
 }
 
 /* Keyframes untuk menggerakkan background */
