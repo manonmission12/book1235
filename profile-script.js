@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 0. DARK MODE LOGIC ---
+    // --- 0. DARK MODE ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
     const icon = themeToggle ? themeToggle.querySelector('i') : null;
@@ -26,21 +26,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 1. USER & AVATAR ---
+    // --- 1. USER AUTH & LOAD PROFILE ---
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) { window.location.href = 'index.html'; return; }
 
-    document.getElementById('profileName').innerText = currentUser;
-    document.querySelector('.user-name').innerText = currentUser;
+    // Elements
+    const dispName = document.getElementById('profileName');
+    const dispEmail = document.getElementById('profileEmail');
+    const dispBio = document.getElementById('profileBio');
+    const navName = document.querySelector('.user-name');
+    const navAvatar = document.getElementById('navAvatar');
+    const profileImg = document.getElementById('profileImg');
+
+    // Load Data Profil Custom (Jika ada)
+    const profileKey = `userProfileData_${currentUser}`;
+    let profileData = JSON.parse(localStorage.getItem(profileKey)) || {
+        fullName: currentUser, // Default ke username jika belum diset
+        email: `${currentUser.toLowerCase().replace(/\s/g, '')}@student.com`,
+        bio: "Penggemar buku yang rajin."
+    };
+
+    // Update UI
+    function updateProfileUI() {
+        dispName.innerText = profileData.fullName;
+        dispEmail.innerText = profileData.email;
+        dispBio.innerText = profileData.bio;
+        navName.innerText = profileData.fullName; // Update nama di navbar juga
+    }
+    updateProfileUI();
     
     // Load Avatar
     const savedPhoto = localStorage.getItem(`profilePic_${currentUser}`);
     if (savedPhoto) {
-        document.getElementById('profileImg').src = savedPhoto;
-        document.getElementById('navAvatar').src = savedPhoto;
+        profileImg.src = savedPhoto;
+        navAvatar.src = savedPhoto;
     }
 
-    // Avatar Upload
+    // Avatar Upload Logic
     const fileInput = document.getElementById('fileInput');
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
@@ -48,38 +70,71 @@ document.addEventListener('DOMContentLoaded', () => {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imgResult = e.target.result;
-                document.getElementById('profileImg').src = imgResult;
-                document.getElementById('navAvatar').src = imgResult;
+                profileImg.src = imgResult;
+                navAvatar.src = imgResult;
                 localStorage.setItem(`profilePic_${currentUser}`, imgResult);
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // --- 2. DATA LOAD & STATE ---
+    // --- 2. EDIT PROFILE MODAL LOGIC ---
+    const editModal = document.getElementById('editProfileModal');
+    const btnOpenEdit = document.getElementById('btnOpenEditProfile');
+    const editForm = document.getElementById('editProfileForm');
+
+    // Buka Modal & Isi Value Lama
+    btnOpenEdit.addEventListener('click', () => {
+        document.getElementById('inputFullName').value = profileData.fullName;
+        document.getElementById('inputEmail').value = profileData.email;
+        document.getElementById('inputBio').value = profileData.bio;
+        editModal.classList.add('active');
+    });
+
+    // Tutup Modal
+    window.closeEditModal = () => { editModal.classList.remove('active'); };
+    
+    // Simpan Data
+    editForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Update Data Object
+        profileData.fullName = document.getElementById('inputFullName').value;
+        profileData.email = document.getElementById('inputEmail').value;
+        profileData.bio = document.getElementById('inputBio').value;
+
+        // Simpan ke LocalStorage
+        localStorage.setItem(profileKey, JSON.stringify(profileData));
+
+        // Refresh UI & Tutup
+        updateProfileUI();
+        closeEditModal();
+        alert("Profil berhasil diperbarui!");
+    });
+
+
+    // --- 3. DATA LOAD (BOOKS) ---
     let savedBooks = [];
     let myUploads = [];
-
     const savedListEl = document.getElementById('savedList');
     const uploadedListEl = document.getElementById('uploadedList');
 
-    function loadData() {
+    function loadBooks() {
         savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
         myUploads = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
         
         document.getElementById('statCollection').innerText = savedBooks.length;
         document.getElementById('statUploads').innerText = myUploads.length;
         
-        applyFilters(); // Render data
+        applyFilters(); 
     }
 
-    // --- 3. FILTER, SEARCH & SORT LOGIC ---
+    // --- 4. FILTER, SEARCH & SORT ---
     const searchInput = document.getElementById('profileSearch');
     const sortSelect = document.getElementById('profileSort');
     const tabs = document.querySelectorAll('.tab-btn');
-    let currentTab = 'koleksi'; // 'koleksi' or 'upload'
+    let currentTab = 'koleksi';
 
-    // Event Listeners
     searchInput.addEventListener('input', applyFilters);
     sortSelect.addEventListener('change', applyFilters);
 
@@ -87,10 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
             tab.classList.add('active');
             document.getElementById(tab.getAttribute('data-target')).classList.add('active');
-            
             currentTab = tab.getAttribute('data-target');
             applyFilters();
         });
@@ -99,31 +152,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyFilters() {
         const keyword = searchInput.value.toLowerCase();
         const sortType = sortSelect.value;
-        
-        // Pilih data berdasarkan tab aktif
         let data = currentTab === 'koleksi' ? [...savedBooks] : [...myUploads];
 
-        // 1. FILTER SEARCH
         if (keyword) {
             data = data.filter(b => b.title.toLowerCase().includes(keyword) || b.author.toLowerCase().includes(keyword));
         }
 
-        // 2. SORTING
         data.sort((a, b) => {
             if (sortType === 'az') return a.title.localeCompare(b.title);
             if (sortType === 'za') return b.title.localeCompare(a.title);
-            if (sortType === 'newest') return (b.id > a.id) ? 1 : -1; // Asumsi ID mengandung timestamp
-            if (sortType === 'oldest') return (a.id > b.id) ? 1 : -1;
-            return 0;
+            return (b.id > a.id) ? 1 : -1; // Newest default
         });
 
-        // 3. RENDER
         const container = currentTab === 'koleksi' ? savedListEl : uploadedListEl;
         const isUploadMode = (currentTab === 'upload');
         renderList(data, container, "Buku tidak ditemukan.", isUploadMode);
     }
 
-    // --- 4. RENDER FUNCTION (WITH EDIT & DELETE) ---
     function renderList(data, container, emptyMsg, isUploadMode) {
         container.innerHTML = '';
         if (data.length === 0) {
@@ -137,19 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgSrc = book.img || 'https://via.placeholder.com/300x450';
             
             let actionButtons = '';
-            
-            // Tombol Edit & Delete HANYA di Tab Upload
             if (isUploadMode) {
                 actionButtons = `
                     <div class="card-actions">
-                        <button class="action-btn btn-edit" title="Edit Buku">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button class="action-btn btn-delete" title="Hapus Buku">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                `;
+                        <button class="action-btn btn-edit" title="Edit Buku"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="action-btn btn-delete" title="Hapus Buku"><i class="fas fa-trash-alt"></i></button>
+                    </div>`;
             }
 
             card.innerHTML = `
@@ -161,24 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Event Listeners Tombol
             if (isUploadMode) {
-                // EDIT
                 card.querySelector('.btn-edit').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Redirect ke halaman upload dengan parameter ID
                     window.location.href = `upload.html?edit=${book.id}`;
                 });
-
-                // DELETE
                 card.querySelector('.btn-delete').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (confirm(`Hapus "${book.title}" permanen?`)) {
-                        deleteBook(book.id);
-                    }
+                    if (confirm(`Hapus "${book.title}" permanen?`)) deleteBook(book.id);
                 });
             }
-
             container.appendChild(card);
         });
     }
@@ -187,11 +217,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let uploads = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
         const updated = uploads.filter(b => b.id !== id);
         localStorage.setItem('myUploadedBooks', JSON.stringify(updated));
-        alert('Buku berhasil dihapus.');
-        loadData(); // Refresh
+        loadBooks();
     }
 
-    // --- 5. LOGOUT ---
     document.getElementById('logoutBtnProfile').addEventListener('click', () => {
         if(confirm('Keluar akun?')) {
             localStorage.removeItem('currentUser');
@@ -199,6 +227,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // START
-    loadData();
+    loadBooks();
 });
