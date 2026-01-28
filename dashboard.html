@@ -55,10 +55,21 @@
             <p class="page-subtitle">Koleksi buku pilihan untuk masa depanmu.</p>
         </div>
         
-        <div class="search-wrapper">
+        <div class="dashboard-toolbar">
             <div class="search-box">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchBook" placeholder="Cari judul buku atau penulis...">
+            </div>
+            
+            <div class="sort-box">
+                <i class="fas fa-sort-amount-down"></i>
+                <select id="dashboardSort">
+                    <option value="default">Rekomendasi</option>
+                    <option value="newest">Terbaru</option>
+                    <option value="rating">Rating Tertinggi</option>
+                    <option value="az">Judul (A-Z)</option>
+                    <option value="za">Judul (Z-A)</option>
+                </select>
             </div>
         </div>
 
@@ -93,18 +104,15 @@
     <div class="modal-overlay" id="detailModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            
             <div class="modal-body">
                 <div class="modal-img-wrapper">
                     <img id="modalImg" src="" alt="Cover Buku">
                 </div>
-                
                 <div class="modal-info">
                     <div class="modal-badges">
                         <span class="badge-cat" id="modalCategory">Kategori</span>
                         <span class="badge-rate">Rating Global: ⭐ <span id="modalRating">0.0</span></span>
                     </div>
-
                     <h2 id="modalTitle">Judul Buku</h2>
                     <p class="modal-author">Penulis: <span id="modalAuthor">-</span></p>
                     
@@ -118,7 +126,6 @@
                                 <option value="finished">Sudah Selesai</option>
                             </select>
                         </div>
-
                         <div class="control-group">
                             <label>Rating Kamu:</label>
                             <div class="star-rating" id="userStarRating">
@@ -143,7 +150,6 @@
                         <textarea id="noteInput" placeholder="Tulis insight penting dari buku ini..."></textarea>
                         <button id="saveNoteBtn" class="btn-save-note">Simpan Catatan</button>
                     </div>
-
                 </div>
             </div>
         </div>

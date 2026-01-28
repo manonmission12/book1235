@@ -225,3 +225,98 @@ h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
     }
     .book-card img { height: 200px; }
 }
+
+/* ... (kode CSS sebelumnya tetap sama) ... */
+
+/* TAMBAHAN BARU: TOMBOL HAPUS BUKU */
+.book-card {
+    position: relative; /* Penting agar tombol hapus bisa diposisikan absolut */
+}
+
+.delete-btn-card {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border);
+    color: #e74c3c; /* Warna Merah */
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0; transform: scale(0.8);
+    transition: 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Tombol muncul saat kartu di-hover */
+.book-card:hover .delete-btn-card {
+    opacity: 1; transform: scale(1);
+}
+
+.delete-btn-card:hover {
+    background: #e74c3c;
+    color: #fff;
+    border-color: #e74c3c;
+}
+
+/* Dark Mode Adjustment */
+[data-theme="dark"] .delete-btn-card {
+    background: rgba(30, 30, 30, 0.9);
+    border-color: #444;
+}
+
+/* ... (KODE LAMA TETAP SAMA, TAMBAHKAN INI DI BAWAH) ... */
+
+/* --- PROFILE TOOLBAR (SEARCH & SORT) --- */
+.profile-toolbar {
+    display: flex; gap: 15px; margin-bottom: 30px;
+    flex-wrap: wrap; justify-content: space-between;
+}
+
+.search-box-profile, .sort-box-profile {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 10px 15px; border-radius: 8px;
+    flex: 1; min-width: 200px;
+}
+
+.search-box-profile input, .sort-box-profile select {
+    border: none; background: transparent;
+    width: 100%; outline: none;
+    color: var(--text-primary); font-size: 0.9rem;
+}
+.search-box-profile i, .sort-box-profile i { color: var(--text-secondary); }
+
+/* --- TOMBOL AKSI DI KARTU (EDIT & DELETE) --- */
+.book-card { position: relative; }
+
+.card-actions {
+    position: absolute; top: 10px; right: 10px;
+    display: flex; gap: 8px;
+    opacity: 0; transform: translateY(-5px); transition: 0.2s ease;
+    z-index: 10;
+}
+
+.book-card:hover .card-actions { opacity: 1; transform: translateY(0); }
+
+.action-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.95);
+    cursor: pointer; transition: 0.2s;
+    font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-edit { color: var(--text-primary); }
+.btn-edit:hover { background: var(--text-primary); color: var(--bg-card); border-color: var(--text-primary); }
+
+.btn-delete { color: #e74c3c; }
+.btn-delete:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
+
+/* Dark Mode Adjustment */
+[data-theme="dark"] .action-btn { background: rgba(30, 30, 30, 0.9); border-color: #444; }
+[data-theme="dark"] .btn-edit { color: #fff; }

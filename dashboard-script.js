@@ -26,20 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. AUTH CHECK ---
     const currentUser = localStorage.getItem('currentUser'); 
-    if (!currentUser) {
-        window.location.href = 'index.html';
-        return;
-    }
+    if (!currentUser) { window.location.href = 'index.html'; return; }
     
     const SAVED_KEY = `savedBooks_${currentUser}`;
     const RATINGS_KEY = `ratings_${currentUser}`;
 
-    const userDisplay = document.getElementById('userDisplay');
-    if(userDisplay) userDisplay.innerText = `Halo, ${currentUser}`;
-
+    document.getElementById('userDisplay').innerText = `Halo, ${currentUser}`;
     const savedPhoto = localStorage.getItem(`profilePic_${currentUser}`);
-    const navAvatar = document.querySelector('.profile-trigger .avatar');
-    if (savedPhoto && navAvatar) navAvatar.src = savedPhoto;
+    if (savedPhoto) document.querySelector('.profile-trigger .avatar').src = savedPhoto;
 
     // --- 2. DATA BUKU ---
     const defaultBooks = [
@@ -53,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "B8", title: "Marketing 4.0", author: "Philip Kotler", category: "Bisnis", rating: 4.7, img: "covers/marketing 4.0.png", pdf: "books/8. Marketing 4.0.pdf" },
         { id: "B9", title: "Marketing in Crisis", author: "Rhenald Kasal", category: "Bisnis", rating: 4.5, img: "covers/marketing in crisis.png", pdf: "books/9. Marketing in Crisis.pdf" },
         { id: "B10", title: "Mindset", author: "Dr. Carol S. Dweck", category: "Self-Improvement", rating: 4.3, img: "covers/mindset.png", pdf: "books/10. Mindset.pdf" },
-        { id: "B11", title: "Sebuah Seni Untuk Bersikap Bodo Amat", author: "Mark Manson", category: "Self-Improvement", rating: 4.6, img: "covers/sebuah seni untuk bersikap bodo amat.png", pdf: "books/11. Sebuah Seni untuk Bersikap Bodo Amat.pdf" },
+        { id: "B11", title: "Bodo Amat", author: "Mark Manson", category: "Self-Improvement", rating: 4.6, img: "covers/sebuah seni untuk bersikap bodo amat.png", pdf: "books/11. Sebuah Seni untuk Bersikap Bodo Amat.pdf" },
         { id: "B12", title: "Thinking, Fast & Slow", author: "Daniel Kahneman", category: "Self-Improvement", rating: 4.7, img: "covers/thinking fast and slow.png", pdf: "books/12. Thinking, fast and slow.pdf" },
         { id: "B13", title: "Grit", author: "Angela Duckworth", category: "Self-Improvement", rating: 4.5, img: "covers/grit.png", pdf: "books/grit.pdf" },
         { id: "B14", title: "Show Your Work", author: "Austin Kleon", category: "Self-Improvement", rating: 4.8, img: "covers/Show Your Work.png", pdf: "books/14. Show your work.pdf" },
@@ -61,11 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "B16", title: "Think Like a Freak", author: "Steven D. Levitt", category: "Self-Improvement", rating: 4.9, img: "covers/think like a freak.png", pdf: "books/16. Think like a freak.pdf" }
     ];
 
-    let uploadedBooks = [];
-    try {
-        uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
-    } catch (e) { uploadedBooks = []; }
-    let allBooks = [...uploadedBooks.reverse(), ...defaultBooks];
+    let uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
+    let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; // Default: Upload terbaru dulu
 
     // --- 3. TOAST MSG ---
     const showToast = (msg, type = 'success') => {
@@ -77,28 +68,78 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(container);
         }
         const toast = document.createElement('div');
-        
         toast.style.cssText = `
             background: var(--text-primary); color: var(--bg-card); 
             padding: 12px 20px; border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: 'Inter', sans-serif; 
             font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border);
-            display: flex; align-items: center; gap: 10px;
-            animation: fadeIn 0.3s forwards;
+            display: flex; align-items: center; gap: 10px; animation: fadeIn 0.3s forwards;
         `;
-        
         const icon = type === 'success' ? '✅' : '⚠️';
         toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     };
 
-    // --- 4. RENDER FUNCTION ---
+    // --- 4. RENDER, FILTER & SORT LOGIC ---
     const bookList = document.getElementById('bookList');
     const searchBar = document.getElementById('searchBook');
+    const sortSelect = document.getElementById('dashboardSort');
     const categoryBtns = document.querySelectorAll('.btn-cat');
 
-    function renderBooks(data, isSavedView = false) {
+    let currentCategory = 'all'; // State untuk filter aktif
+
+    function getFilteredAndSortedBooks() {
+        let result = [];
+
+        // 1. FILTER CATEGORY / TAB
+        if (currentCategory === 'all') {
+            result = [...allBooks];
+        } else if (currentCategory === 'saved') {
+            result = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+        } else if (currentCategory === 'reading' || currentCategory === 'finished') {
+            const saved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+            result = saved.filter(b => b.status === currentCategory);
+        } else {
+            result = allBooks.filter(b => b.category === currentCategory);
+        }
+
+        // 2. FILTER SEARCH
+        const keyword = searchBar.value.toLowerCase();
+        if (keyword) {
+            result = result.filter(b => 
+                b.title.toLowerCase().includes(keyword) || 
+                b.author.toLowerCase().includes(keyword)
+            );
+        }
+
+        // 3. SORTING
+        const sortType = sortSelect.value;
+        if (sortType === 'az') {
+            result.sort((a, b) => a.title.localeCompare(b.title));
+        } else if (sortType === 'za') {
+            result.sort((a, b) => b.title.localeCompare(a.title));
+        } else if (sortType === 'rating') {
+            result.sort((a, b) => b.rating - a.rating);
+        } else if (sortType === 'newest') {
+            // Asumsi ID upload ada timestamp, ID default B1, B2...
+            // Kita anggap ID yang lebih besar/panjang lebih baru untuk simpelnya
+            // Atau logic: Uploaded books (U...) always newer than Default (B...)
+            result.sort((a, b) => {
+                const isAUpload = a.id.startsWith('U');
+                const isBUpload = b.id.startsWith('U');
+                if (isAUpload && !isBUpload) return -1; // A lebih baru
+                if (!isAUpload && isBUpload) return 1;
+                return 0; // Sama2 default atau sama2 upload, biarkan urutan array (reverse di awal)
+            });
+        }
+        // 'default' = urutan asli array (rekomendasi/campur)
+
+        return result;
+    }
+
+    function renderBooks() {
+        const data = getFilteredAndSortedBooks();
         bookList.innerHTML = '';
         
         if (data.length === 0) {
@@ -115,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const imgSrc = book.img || book.image; 
             
-            // Cek status selesai untuk centang
             let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
             const savedItem = savedList.find(item => item.id === book.id);
             const isFinished = savedItem && savedItem.status === 'finished';
@@ -125,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="book-info">
                     <h3>${book.title} ${isFinished ? '<i class="fas fa-check-circle" style="font-size:0.8rem; margin-left:5px;"></i>' : ''}</h3>
                     <p>${book.author}</p>
-                    
                     <div class="card-footer">
                          <span class="tag">${book.category}</span>
                          <span class="mini-rating">⭐ ${book.rating}</span>
@@ -137,46 +176,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    renderBooks(allBooks); 
-
-    // --- 5. SEARCH & FILTER (DIPERBARUI) ---
-    if (searchBar) {
-        searchBar.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase();
-            renderBooks(allBooks.filter(b => 
-                b.title.toLowerCase().includes(keyword) || 
-                b.author.toLowerCase().includes(keyword)
-            ));
-        });
-    }
+    // --- EVENT LISTENERS UTAMA ---
+    searchBar.addEventListener('input', renderBooks);
+    sortSelect.addEventListener('change', renderBooks);
 
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             categoryBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            const cat = btn.getAttribute('data-cat');
-            
-            // --- LOGIKA FILTER BARU ---
-            if (cat === 'all') {
-                renderBooks(allBooks);
-            } else if (cat === 'saved') {
-                // Tampilkan semua yg tersimpan
-                const mySaved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
-                renderBooks(mySaved, true);
-            } else if (cat === 'reading' || cat === 'finished') {
-                // Filter spesifik berdasarkan status
-                const mySaved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
-                const filtered = mySaved.filter(b => b.status === cat);
-                renderBooks(filtered, true);
-            } else {
-                // Filter kategori biasa
-                renderBooks(allBooks.filter(b => b.category === cat));
-            }
+            currentCategory = btn.getAttribute('data-cat');
+            renderBooks();
         });
     });
 
-    // --- 6. MODAL & INTERAKSI ---
+    // Initial Render
+    renderBooks();
+
+
+    // --- 6. MODAL & INTERACTIONS ---
     const modal = document.getElementById('detailModal');
 
     function openModal(book) {
@@ -188,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalCategory').innerText = book.category;
         document.getElementById('modalRating').innerText = book.rating;
         
-        // --- LOGIKA STATUS BACA ---
         const statusSelect = document.getElementById('readingStatusSelect');
         let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
         const existingItem = savedList.find(item => item.id === book.id);
@@ -216,21 +233,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
-            
-            // --- REFRESH SESUAI TAB AKTIF ---
-            const activeCat = document.querySelector('.btn-cat.active').getAttribute('data-cat');
-            
-            if (activeCat === 'saved') {
-                renderBooks(savedList, true);
-            } else if (activeCat === 'reading' || activeCat === 'finished') {
-                 // Refresh filter status
-                 renderBooks(savedList.filter(b => b.status === activeCat), true);
-            } else {
-                renderBooks(allBooks); 
-            }
+            renderBooks(); // Refresh UI langsung
         };
 
-        // --- RATING & NOTES SAMA SEPERTI SEBELUMNYA ---
+        // Bintang
         const stars = document.querySelectorAll('#userStarRating i');
         let userRatings = JSON.parse(localStorage.getItem(RATINGS_KEY) || '{}');
         let currentRating = userRatings[book.id] || 0;
@@ -258,8 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-        const btnRead = document.getElementById('btnReadBook');
-        btnRead.onclick = () => {
+        document.getElementById('btnReadBook').onclick = () => {
             const pdfLink = book.file || book.pdf; 
             if (pdfLink) window.open(pdfLink, '_blank');
             else showToast('PDF tidak tersedia', 'error');
@@ -268,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const noteInput = document.getElementById('noteInput');
         const saveNoteBtn = document.getElementById('saveNoteBtn');
         const saveStatus = document.getElementById('saveStatus');
-        
         const noteKey = `note_${currentUser}_${book.id}`;
         noteInput.value = localStorage.getItem(noteKey) || '';
         saveStatus.style.display = 'none';
