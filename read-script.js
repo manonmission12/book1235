@@ -1,141 +1,91 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Setup PDF.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    let pdfDoc = null, pageNum = 1, scale = 1.2, pageRendering = false;
-
-    // Referensi Elemen DOM
+    let pdfDoc = null, pageNum = 1, scale = 1.0, pageRendering = false;
     const canvas = document.getElementById('the-canvas'), ctx = canvas.getContext('2d');
-    const textLayerDiv = document.getElementById('text-layer');
-    const pdfWrapper = document.getElementById('pdfWrapper');
+    const textLayerDiv = document.getElementById('text-layer'), pdfWrapper = document.getElementById('pdfWrapper');
     const loadingOverlay = document.getElementById('loadingOverlay');
 
-    // Ambil Parameter URL
     const urlParams = new URLSearchParams(window.location.search);
-    const bookTitle = urlParams.get('title');
-    const bookSource = urlParams.get('source');
-    
-    document.getElementById('displayTitle').innerText = bookTitle || "Dokumen";
+    const bookTitle = urlParams.get('title'), bookSource = urlParams.get('source');
     const highlightKey = `highlights_${bookSource || 'default'}`;
 
-    // --- FUNGSI RENDER UTAMA ---
+    // --- RENDER ---
     async function renderPage(num) {
         pageRendering = true;
-        loadingOverlay.classList.add('active'); // Mulai Loading
-        textLayerDiv.classList.remove('hidden'); // Pastikan text layer siap
-
+        
         try {
             const page = await pdfDoc.getPage(num);
-            
-            // Set Ukuran
             const viewport = page.getViewport({ scale: scale });
+
             canvas.height = viewport.height;
             canvas.width = viewport.width;
             pdfWrapper.style.width = `${viewport.width}px`;
             pdfWrapper.style.height = `${viewport.height}px`;
 
-            // Render Gambar
-            const renderContext = { canvasContext: ctx, viewport: viewport };
-            await page.render(renderContext).promise;
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
 
-            // Render Teks (untuk Stabilo)
             const textContent = await page.getTextContent();
-            
-            // Reset Text Layer
             textLayerDiv.innerHTML = '';
             textLayerDiv.style.width = `${viewport.width}px`;
             textLayerDiv.style.height = `${viewport.height}px`;
-
-            // Gambar ulang text layer
+            
             pdfjsLib.renderTextLayer({
                 textContent: textContent,
                 container: textLayerDiv,
                 viewport: viewport,
                 textDivs: []
             });
+            textLayerDiv.classList.remove('hidden');
 
         } catch (error) {
-            console.error("Error rendering page:", error);
+            console.error(error);
         } finally {
-            // PENTING: Matikan loading apapun yang terjadi
             pageRendering = false;
             loadingOverlay.classList.remove('active');
-            document.getElementById('pageInfo').innerText = `Hal ${num} / ${pdfDoc ? pdfDoc.numPages : '-'}`;
+            document.getElementById('pageInfo').innerText = `Hal ${num} dari ${pdfDoc ? pdfDoc.numPages : '-'}`;
         }
     }
 
-    // --- NAVIGASI & ANIMASI ---
-    function goToPage(direction) {
+    // --- NAVIGASI ---
+    async function goToPage(direction) {
         if (pageRendering) return;
-
         const targetPage = direction === 'next' ? pageNum + 1 : pageNum - 1;
         if (targetPage < 1 || targetPage > pdfDoc.numPages) return;
 
-        // 1. Sembunyikan Text Layer (biar animasi mulus)
         textLayerDiv.classList.add('hidden');
-
-        // 2. Tambahkan Class Animasi
         const animClass = direction === 'next' ? 'page-turning-next' : 'page-turning-prev';
         canvas.classList.add(animClass);
 
-        // 3. Tunggu kertas 'tegak' (400ms), lalu ganti isi
-        setTimeout(() => {
+        setTimeout(async () => {
             pageNum = targetPage;
-            renderPage(pageNum);
-
-            // 4. Balikin kertas (Hapus animasi)
-            setTimeout(() => {
-                canvas.classList.remove(animClass);
-            }, 100);
-        }, 400);
+            loadingOverlay.classList.add('active');
+            await renderPage(pageNum);
+            loadingOverlay.classList.remove('active');
+            canvas.classList.remove(animClass);
+        }, 300);
     }
 
-    // Event Listeners Navigasi
     document.getElementById('prevBtn').addEventListener('click', () => goToPage('prev'));
     document.getElementById('nextBtn').addEventListener('click', () => goToPage('next'));
-
-    // Keyboard & Swipe
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') goToPage('next');
         if (e.key === 'ArrowLeft') goToPage('prev');
     });
 
-    // --- FITUR EKSTRA ---
-    
-    // Zoom
-    const updateZoomUI = () => document.getElementById('zoomLevel').innerText = Math.round(scale * 100) + "%";
+    // --- ZOOM & UI ---
+    const updateZoomUI = () => document.getElementById('zoomLevel').innerText = Math.round(scale*100) + "%";
     document.getElementById('zoomIn').addEventListener('click', () => { scale += 0.2; renderPage(pageNum); updateZoomUI(); });
-    document.getElementById('zoomOut').addEventListener('click', () => { if(scale > 0.6) scale -= 0.2; renderPage(pageNum); updateZoomUI(); });
+    document.getElementById('zoomOut').addEventListener('click', () => { if(scale > 0.4) scale -= 0.2; renderPage(pageNum); updateZoomUI(); });
 
-    // Sepia
-    document.getElementById('sepiaToggle').addEventListener('click', () => {
-        document.body.classList.toggle('sepia-mode');
-    });
-
-    // Dark Mode Sync
-    const themeToggle = document.getElementById('themeToggle');
-    const updateIcon = () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        themeToggle.querySelector('i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    };
-    
-    if(localStorage.getItem('theme') === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        updateIcon();
-    }
-
-    themeToggle.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        localStorage.setItem('theme', isDark ? 'light' : 'dark');
-        updateIcon();
-    });
-
-    // Sidebar & Highlight
+    document.getElementById('sepiaToggle').addEventListener('click', () => document.body.classList.toggle('sepia-mode'));
     document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
-        document.getElementById('sidebarNotes').classList.toggle('hidden');
+        const sidebar = document.getElementById('sidebarNotes');
+        sidebar.classList.toggle('hidden');
+        document.getElementById('toggleSidebarBtn').classList.toggle('active');
     });
 
+    // --- HIGHLIGHTS ---
     document.getElementById('highlightBtn').addEventListener('click', () => {
         const text = window.getSelection().toString().trim();
         if (text) {
@@ -149,41 +99,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadHighlights() {
         const list = document.getElementById('highlightsList');
-        if (!list) return;
         const saved = JSON.parse(localStorage.getItem(highlightKey) || '[]');
-        list.innerHTML = saved.length ? '' : '<div style="text-align:center; padding:20px; color:#666;">Belum ada highlight.</div>';
         
+        if (saved.length === 0) {
+            list.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; color:#9ca3af;">
+                    <i class="fas fa-book-open" style="font-size:2rem; margin-bottom:12px; opacity:0.5;"></i>
+                    <p style="font-size:0.9rem;">Belum ada highlight.</p>
+                </div>`;
+            return;
+        }
+
+        list.innerHTML = '';
         saved.reverse().forEach(h => {
-            const div = document.createElement('div');
-            div.style.cssText = "background:var(--bg-input, #eee); padding:10px; margin-bottom:10px; border-left:4px solid gold; border-radius:4px;";
-            div.innerHTML = `"${h.text}" <br><small style="color:#666">Hal ${h.page}</small> <button onclick="deleteHl(${h.id})" style="float:right; border:none; background:none; color:red; cursor:pointer;">&times;</button>`;
-            list.appendChild(div);
+            const el = document.createElement('div');
+            el.className = 'highlight-card';
+            el.innerHTML = `
+                <span class="highlight-text">"${h.text}"</span>
+                <div class="highlight-meta">
+                    <span><i class="far fa-file-alt"></i> Hal ${h.page}</span>
+                    <button onclick="deleteHl(${h.id})" class="btn-del-item" title="Hapus Highlight ini">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>`;
+            list.appendChild(el);
         });
     }
 
-    window.deleteHl = function(id) {
+    window.deleteHl = (id) => {
         let saved = JSON.parse(localStorage.getItem(highlightKey) || '[]');
-        saved = saved.filter(h => h.id !== id);
-        localStorage.setItem(highlightKey, JSON.stringify(saved));
+        localStorage.setItem(highlightKey, JSON.stringify(saved.filter(h => h.id !== id)));
         loadHighlights();
     };
 
     document.getElementById('clearHighlights').addEventListener('click', () => {
-        if(confirm('Hapus semua?')) { localStorage.removeItem(highlightKey); loadHighlights(); }
+        const saved = JSON.parse(localStorage.getItem(highlightKey) || '[]');
+        if (saved.length === 0) return;
+        if(confirm('Yakin ingin menghapus SEMUA highlight di buku ini?')) { 
+            localStorage.removeItem(highlightKey); 
+            loadHighlights(); 
+        }
     });
 
-    // --- LOAD PDF ---
+    // --- LOAD ---
     if (bookSource) {
+        loadingOverlay.classList.add('active');
         pdfjsLib.getDocument(bookSource).promise.then(doc => {
             pdfDoc = doc;
             renderPage(pageNum);
             loadHighlights();
         }).catch(err => {
             console.error(err);
-            loadingOverlay.classList.remove('active');
-            alert("Gagal memuat PDF. Pastikan file ada.");
+            alert("Gagal memuat PDF.");
         });
-    } else {
-        loadingOverlay.classList.remove('active');
-    }
+    } else { loadingOverlay.classList.remove('active'); }
 });
