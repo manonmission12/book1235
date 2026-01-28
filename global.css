@@ -4,6 +4,7 @@
     --bg-body: #f8f9fa;      
     --bg-card: #ffffff;      
     --bg-input: #ffffff;
+    --bg-modal: #ffffff;
     
     --text-primary: #111111;    
     --text-secondary: #666666;  
@@ -26,6 +27,7 @@
     --bg-body: #121212;      
     --bg-card: #1e1e1e;      
     --bg-input: #2d2d2d;
+    --bg-modal: #1e1e1e;
 
     --text-primary: #ffffff;    
     --text-secondary: #b0b0b0;  
@@ -43,7 +45,7 @@
     --shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
-/* --- 2. LAYOUT FIX --- */
+/* --- 2. LAYOUT DASAR --- */
 html, body {
     margin: 0; padding: 0;
     height: 100%; width: 100%;
@@ -66,11 +68,29 @@ h1, h2, h3, h4, .brand {
     font-weight: 700; margin: 0;
 }
 
-/* --- 3. NAVBAR STYLES (UPDATED) --- */
-/* Style untuk Link Navigasi Tengah (Beranda & Profil) */
+/* --- 3. NAVBAR STYLES (TERPUSAT) --- */
+.navbar {
+    width: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 5%;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 1000;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Logo */
+.brand {
+    font-size: 1.3rem; color: var(--text-primary);
+    text-decoration: none; display: flex; align-items: center; gap: 10px;
+    z-index: 1002; /* Agar di atas nav links */
+}
+
+/* Navigasi Tengah (Beranda & Profil) */
 .nav-links {
     display: flex; gap: 30px;
-    position: absolute; left: 50%; transform: translateX(-50%); /* Posisi tepat di tengah layar */
+    position: absolute; left: 50%; transform: translateX(-50%);
+    z-index: 1001;
 }
 
 .nav-link {
@@ -88,34 +108,67 @@ h1, h2, h3, h4, .brand {
     width: 100%; height: 2px; background: var(--text-primary); border-radius: 2px;
 }
 
+/* Menu Kanan */
+.nav-right { 
+    display: flex; align-items: center; gap: 15px; 
+    z-index: 1002;
+}
+
+.theme-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-primary); padding: 8px 12px; border-radius: 50px;
+    cursor: pointer; transition: 0.3s;
+}
+.theme-btn:hover { background: var(--border); }
+
+/* Profile Trigger & Dropdown */
+.profile-menu { position: relative; }
+
+.profile-trigger {
+    display: flex; align-items: center; gap: 12px; padding: 6px 8px 6px 16px;
+    background: var(--bg-input); border-radius: 50px; cursor: pointer;
+    border: 1px solid var(--border); transition: 0.3s;
+}
+.profile-trigger:hover { border-color: var(--text-secondary); }
+
+.user-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+.avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+
+.dropdown-menu {
+    position: absolute; top: 55px; right: 0;
+    background: var(--bg-card); width: 200px;
+    border-radius: 12px; border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    display: none; flex-direction: column; overflow: hidden; padding: 5px;
+    z-index: 1100;
+}
+.dropdown-menu.active { display: flex; }
+
+.dropdown-item {
+    padding: 10px 15px; color: var(--text-secondary);
+    text-decoration: none; font-size: 0.9rem; font-weight: 500;
+    border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 10px;
+}
+.dropdown-item:hover { background: var(--border); color: var(--text-primary); }
+.dropdown-divider { height: 1px; background: var(--border); margin: 5px 0; }
+
 /* --- 4. FOOTER STYLE --- */
 .main-footer {
     flex-shrink: 0;
     background: var(--bg-card); border-top: 1px solid var(--border);
     padding: 40px 20px; text-align: center; margin-top: 50px;
 }
-
-.footer-content {
-    max-width: 1200px; margin: 0 auto;
-    display: flex; flex-direction: column; align-items: center; gap: 20px;
-}
-
-.footer-brand {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 700; font-size: 1.2rem;
-    display: flex; align-items: center; gap: 10px; color: var(--text-primary);
-}
-
+.footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; color: var(--text-primary); }
 .footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
 .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: 0.2s; }
 .footer-links a:hover { color: var(--text-primary); }
-
 .copyright { color: var(--text-secondary); font-size: 0.85rem; opacity: 0.8; }
 
 /* Responsive */
 @media (max-width: 768px) {
     .main-footer { padding: 30px 20px; }
-    
-    /* Sembunyikan navigasi teks di HP agar tidak sempit (akses lewat ikon/logo) */
-    .nav-links { display: none; } 
+    .nav-links { display: none; } /* Sembunyikan link teks di HP agar muat */
+    .user-name { display: none; }
+    .profile-trigger { padding: 5px; border: none; background: transparent; }
 }

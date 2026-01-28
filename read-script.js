@@ -3,29 +3,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 0. DARK MODE ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
-    const icon = themeToggle.querySelector('i');
+    const icon = themeToggle ? themeToggle.querySelector('i') : null;
 
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         root.setAttribute('data-theme', 'dark');
-        icon.classList.replace('fa-moon', 'fa-sun');
+        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
     }
 
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = root.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            root.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-            icon.classList.replace('fa-sun', 'fa-moon');
-        } else {
-            root.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            icon.classList.replace('fa-moon', 'fa-sun');
-        }
-    });
+    if(themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                root.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                if(icon) icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    }
 
-    // --- 1. AMBIL PARAMETER DARI URL ---
-    // URL contoh: read.html?title=Atomic%20Habits&source=books/3.pdf
+    // --- 1. AMBIL DATA DARI URL ---
+    // Contoh URL: read.html?title=JudulBuku&source=link.pdf
     const urlParams = new URLSearchParams(window.location.search);
     const bookTitle = urlParams.get('title');
     const bookSource = urlParams.get('source');
@@ -35,21 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdfError = document.getElementById('pdfError');
     const fallbackLink = document.getElementById('fallbackLink');
 
-    // Validasi
+    // Validasi & Tampilkan
     if (bookTitle) displayTitle.innerText = bookTitle;
     
     if (bookSource) {
-        // Cek apakah source adalah Base64 (Upload-an user) atau File Path biasa
         pdfViewer.src = bookSource;
         fallbackLink.href = bookSource;
     } else {
-        // Jika tidak ada buku yang dipilih
         pdfViewer.style.display = 'none';
         pdfError.style.display = 'block';
-        document.querySelector('.pdf-error p').innerText = "Buku tidak ditemukan.";
+        document.querySelector('.pdf-error p').innerText = "Buku tidak ditemukan atau link rusak.";
     }
 
-    // Error Handling Iframe (Basic)
+    // Handle jika iframe gagal load (misal link mati)
     pdfViewer.onerror = () => {
         pdfViewer.style.display = 'none';
         pdfError.style.display = 'block';
@@ -58,17 +58,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. FULLSCREEN LOGIC ---
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     
-    fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                alert(`Error attempting to enable fullscreen: ${err.message}`);
-            });
-            fullscreenBtn.querySelector('i').classList.replace('fa-expand', 'fa-compress');
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-                fullscreenBtn.querySelector('i').classList.replace('fa-compress', 'fa-expand');
+    if(fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Gagal masuk layar penuh: ${err.message}`);
+                });
+                fullscreenBtn.querySelector('i').classList.replace('fa-expand', 'fa-compress');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    fullscreenBtn.querySelector('i').classList.replace('fa-compress', 'fa-expand');
+                }
             }
-        }
-    });
+        });
+    }
 });

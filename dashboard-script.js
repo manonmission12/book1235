@@ -3,26 +3,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 0. DARK MODE LOGIC ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
-    const icon = themeToggle.querySelector('i');
+    const icon = themeToggle ? themeToggle.querySelector('i') : null;
 
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         root.setAttribute('data-theme', 'dark');
-        icon.classList.replace('fa-moon', 'fa-sun');
+        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
     }
 
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = root.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            root.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-            icon.classList.replace('fa-sun', 'fa-moon');
-        } else {
-            root.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            icon.classList.replace('fa-moon', 'fa-sun');
-        }
-    });
+    if(themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                root.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                if(icon) icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    }
 
     // --- 1. AUTH CHECK ---
     const currentUser = localStorage.getItem('currentUser'); 
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
-    let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; // Default: Upload terbaru dulu
+    let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; 
 
     // --- 3. TOAST MSG ---
     const showToast = (msg, type = 'success') => {
@@ -87,12 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortSelect = document.getElementById('dashboardSort');
     const categoryBtns = document.querySelectorAll('.btn-cat');
 
-    let currentCategory = 'all'; // State untuk filter aktif
+    let currentCategory = 'all'; 
 
     function getFilteredAndSortedBooks() {
         let result = [];
 
-        // 1. FILTER CATEGORY / TAB
+        // Filter Category
         if (currentCategory === 'all') {
             result = [...allBooks];
         } else if (currentCategory === 'saved') {
@@ -104,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             result = allBooks.filter(b => b.category === currentCategory);
         }
 
-        // 2. FILTER SEARCH
+        // Filter Search
         const keyword = searchBar.value.toLowerCase();
         if (keyword) {
             result = result.filter(b => 
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
 
-        // 3. SORTING
+        // Sorting
         const sortType = sortSelect.value;
         if (sortType === 'az') {
             result.sort((a, b) => a.title.localeCompare(b.title));
@@ -122,19 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (sortType === 'rating') {
             result.sort((a, b) => b.rating - a.rating);
         } else if (sortType === 'newest') {
-            // Asumsi ID upload ada timestamp, ID default B1, B2...
-            // Kita anggap ID yang lebih besar/panjang lebih baru untuk simpelnya
-            // Atau logic: Uploaded books (U...) always newer than Default (B...)
             result.sort((a, b) => {
                 const isAUpload = a.id.startsWith('U');
                 const isBUpload = b.id.startsWith('U');
-                if (isAUpload && !isBUpload) return -1; // A lebih baru
+                if (isAUpload && !isBUpload) return -1; 
                 if (!isAUpload && isBUpload) return 1;
-                return 0; // Sama2 default atau sama2 upload, biarkan urutan array (reverse di awal)
+                return 0; 
             });
         }
-        // 'default' = urutan asli array (rekomendasi/campur)
-
         return result;
     }
 
@@ -236,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderBooks(); // Refresh UI langsung
         };
 
-        // Bintang
+        // Bintang Rating
         const stars = document.querySelectorAll('#userStarRating i');
         let userRatings = JSON.parse(localStorage.getItem(RATINGS_KEY) || '{}');
         let currentRating = userRatings[book.id] || 0;
@@ -264,12 +261,25 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
+        // ---------------------------------------------
+        // UPDATE UTAMA: TOMBOL BACA MENGARAH KE READ.HTML
+        // ---------------------------------------------
         document.getElementById('btnReadBook').onclick = () => {
             const pdfLink = book.file || book.pdf; 
-            if (pdfLink) window.open(pdfLink, '_blank');
-            else showToast('PDF tidak tersedia', 'error');
+            
+            if (pdfLink) {
+                // Encode URL agar karakter seperti spasi aman
+                const safeTitle = encodeURIComponent(book.title);
+                const safeSource = encodeURIComponent(pdfLink);
+                
+                // Redirect ke halaman Reader Mode
+                window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
+            } else {
+                showToast('Maaf, file PDF buku ini belum tersedia.', 'error');
+            }
         };
 
+        // Catatan Pribadi
         const noteInput = document.getElementById('noteInput');
         const saveNoteBtn = document.getElementById('saveNoteBtn');
         const saveStatus = document.getElementById('saveStatus');
