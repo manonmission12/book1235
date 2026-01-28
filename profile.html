@@ -4,63 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Saya - Era Baru Membaca</title>
+    
     <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="dashboard.html" class="brand">Era Baru Membaca</a>
-        <ul class="nav-links">
-            <li><a href="dashboard.html"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a></li>
-        </ul>
+        <a href="dashboard.html" class="brand">
+            <i class="fas fa-arrow-left"></i>
+            <span>Kembali ke Dashboard</span>
+        </a>
+        
+        <div class="nav-right">
+            <button id="themeToggle" class="theme-btn" title="Ganti Tema">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <div class="profile-menu">
+                <div class="profile-trigger" id="profileTrigger">
+                    <span id="userDisplay" class="user-name">User</span>
+                    <img src="https://ui-avatars.com/api/?background=random&color=fff" class="avatar" alt="Profil">
+                </div>
+                </div>
+        </div>
     </nav>
 
-    <main class="profile-wrapper">
-        <div class="profile-container">
-            
+    <main class="profile-content">
+        
+        <div class="profile-header">
             <div class="profile-card">
-                <div class="img-container">
-                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" class="big-profile-img" id="largeProfileImg" alt="Foto Profil">
-                    <label for="uploadInput" class="edit-icon" title="Ganti Foto">
+                <div class="profile-pic-wrapper">
+                    <img src="https://ui-avatars.com/api/?background=random&color=fff" id="profileImg" alt="Foto Profil">
+                    <button class="edit-pic-btn" onclick="document.getElementById('fileInput').click()">
                         <i class="fas fa-camera"></i>
-                    </label>
-                    <input type="file" id="uploadInput" accept="image/*" style="display: none;">
+                    </button>
+                    <input type="file" id="fileInput" hidden accept="image/*">
                 </div>
-
-                <h2 id="profUser">Loading...</h2>
-                <p class="badge-member">✨ Member Setia</p>
+                <h1 id="profileName">Nama Pengguna</h1>
+                <p id="profileEmail" class="profile-email">email@contoh.com</p>
                 
                 <div class="profile-stats">
                     <div class="stat-box">
-                        <i class="fas fa-user-circle"></i>
-                        <p class="label">Username</p>
-                        <h4 id="valUsername">-</h4>
+                        <span class="stat-num" id="statCollection">0</span>
+                        <span class="stat-label">Koleksi</span>
                     </div>
                     <div class="stat-box">
-                        <i class="fas fa-book-bookmark"></i>
-                        <p class="label">Koleksi</p>
-                        <h4 id="valSavedBooks">0 Buku</h4>
+                        <span class="stat-num" id="statUploads">0</span>
+                        <span class="stat-label">Upload</span>
                     </div>
                 </div>
-                
-                <button id="profileLogoutBtn" class="btn-logout">
+
+                <button class="btn-outline-danger" id="logoutBtnProfile">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
+        </div>
 
-            <div class="my-collection-section" id="koleksi">
-                <div class="section-header">
-                    <h3>📚 Koleksi Buku Saya</h3>
-                    <p>Daftar buku yang sudah kamu simpan untuk dibaca nanti.</p>
-                </div>
-                
-                <div class="saved-grid" id="savedBookList">
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-target="koleksi">Koleksi Saya</button>
+            <button class="tab-btn" data-target="upload">Buku Upload</button>
+        </div>
+
+        <div class="profile-body">
+            
+            <div id="koleksi" class="tab-content active">
+                <div class="book-grid" id="savedList">
+                    </div>
+            </div>
+
+            <div id="upload" class="tab-content">
+                <div class="book-grid" id="uploadedList">
                     </div>
             </div>
 
         </div>
+
     </main>
 
     <script src="profile-script.js"></script>

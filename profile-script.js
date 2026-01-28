@@ -1,119 +1,130 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. CEK LOGIN
-    const user = localStorage.getItem('currentUser');
-    if (!user) { window.location.href = 'index.html'; return; }
+    // --- 0. DARK MODE LOGIC (PERSISTENCE) ---
+    const themeToggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const icon = themeToggle ? themeToggle.querySelector('i') : null;
 
-    const STORAGE_KEY = `savedBooks_${user}`;
-    const PHOTO_KEY = `profilePic_${user}`;
-
-    // 2. LOAD DATA PROFIL
-    document.getElementById('profUser').innerText = user;
-    document.getElementById('valUsername').innerText = `@${user}`;
-
-    // Load Foto Profil
-    const savedPhoto = localStorage.getItem(PHOTO_KEY);
-    const imgEl = document.getElementById('largeProfileImg');
-    if (imgEl) {
-        imgEl.src = savedPhoto || `https://ui-avatars.com/api/?name=${user}&background=0D8ABC&color=fff&size=150`;
+    // Cek tema saat load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
     }
 
-    // 3. LOAD KOLEKSI BUKU SAYA
-    const savedListEl = document.getElementById('savedBookList');
-    const countEl = document.getElementById('valSavedBooks');
+    // Toggle klik
+    if(themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                root.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                if(icon) icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    }
 
-    function renderSavedBooks() {
-        // Ambil data terbaru dari LocalStorage
-        const savedBooks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        
-        // Update Statistik Jumlah Buku
-        if(countEl) countEl.innerText = `${savedBooks.length} Buku`;
+    // --- 1. USER CHECK ---
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+        window.location.href = 'index.html';
+        return;
+    }
 
-        savedListEl.innerHTML = ''; // Reset tampilan
+    // Update UI User Info
+    document.getElementById('profileName').innerText = currentUser;
+    document.getElementById('profileEmail').innerText = `${currentUser.toLowerCase().replace(/\s/g, '')}@student.com`; // Dummy email
+    
+    // Load Avatar
+    const savedPhoto = localStorage.getItem(`profilePic_${currentUser}`);
+    if (savedPhoto) {
+        document.getElementById('profileImg').src = savedPhoto;
+        document.querySelector('.profile-trigger img').src = savedPhoto;
+    }
+    document.querySelector('.user-name').innerText = currentUser;
 
-        if (savedBooks.length === 0) {
-            savedListEl.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #777;">
-                    <i class="fas fa-bookmark" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.3;"></i>
-                    <p>Belum ada buku yang disimpan.</p>
-                    <a href="dashboard.html" style="color: var(--primary); text-decoration: none; font-weight: bold; margin-top: 10px; display: inline-block;">Cari di Dashboard &rarr;</a>
-                </div>
-            `;
+    // --- 2. UPLOAD AVATAR ---
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgResult = e.target.result;
+                document.getElementById('profileImg').src = imgResult;
+                document.querySelector('.profile-trigger img').src = imgResult;
+                localStorage.setItem(`profilePic_${currentUser}`, imgResult);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // --- 3. LOAD BOOKS (KOLEKSI & UPLOAD) ---
+    const savedListEl = document.getElementById('savedList');
+    const uploadedListEl = document.getElementById('uploadedList');
+    
+    const savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
+    const myUploads = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
+
+    // Update Stats
+    document.getElementById('statCollection').innerText = savedBooks.length;
+    document.getElementById('statUploads').innerText = myUploads.length;
+
+    // Render Function
+    function renderList(data, container, emptyMsg) {
+        container.innerHTML = '';
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>${emptyMsg}</p>
+                </div>`;
             return;
         }
 
-        savedBooks.forEach((book) => {
+        data.forEach(book => {
             const card = document.createElement('div');
-            card.className = 'saved-card';
+            card.className = 'book-card';
+            const imgSrc = book.img || book.image || 'https://via.placeholder.com/300x450';
             
-            // Cek sumber gambar & pdf (apakah dari upload user atau bawaan)
-            const imgSrc = book.img || book.image;
-            const pdfLink = book.pdf || book.file;
-
+            // Layout Kartu Simpel
             card.innerHTML = `
-                <img src="${imgSrc}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/150x220?text=No+Cover'">
-                <div class="saved-info">
-                    <h4>${book.title}</h4>
+                <img src="${imgSrc}" alt="${book.title}">
+                <div class="book-info">
+                    <h3>${book.title}</h3>
                     <p>${book.author}</p>
-                    <div class="card-actions">
-                        <button class="btn-mini btn-read" onclick="window.open('${pdfLink}', '_blank')">
-                            <i class="fas fa-book-open"></i>
-                        </button>
-                        <button class="btn-mini btn-remove" onclick="removeBook('${book.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
                 </div>
             `;
-            savedListEl.appendChild(card);
+            container.appendChild(card);
         });
     }
 
-    // Fungsi Hapus Buku (Global)
-    window.removeBook = (bookId) => {
-        if(confirm("Hapus buku ini dari koleksi?")) {
-            let savedBooks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            
-            // Filter buku yang ID-nya BUKAN yang mau dihapus
-            savedBooks = savedBooks.filter(b => b.id !== bookId);
-            
-            // Simpan perubahan
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(savedBooks));
-            
-            // Render ulang
-            renderSavedBooks();
+    renderList(savedBooks, savedListEl, "Belum ada buku yang disimpan.");
+    renderList(myUploads, uploadedListEl, "Belum ada buku yang diupload.");
+
+    // --- 4. TABS LOGIC ---
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            tab.classList.add('active');
+            document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+        });
+    });
+
+    // --- 5. LOGOUT ---
+    document.getElementById('logoutBtnProfile').addEventListener('click', () => {
+        if(confirm('Yakin ingin keluar?')) {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
         }
-    };
-
-    // Render Pertama Kali
-    renderSavedBooks();
-
-    // 4. LOGIKA GANTI FOTO PROFIL
-    const uploadInput = document.getElementById('uploadInput');
-    if (uploadInput) {
-        uploadInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) { alert("Ukuran foto maksimal 2MB!"); return; }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result;
-                    imgEl.src = base64;
-                    localStorage.setItem(PHOTO_KEY, base64);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // 5. LOGOUT
-    const logoutBtn = document.getElementById('profileLogoutBtn');
-    if (logoutBtn) {
-        logoutBtn.onclick = () => {
-            if (confirm("Logout sekarang?")) {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
-            }
-        };
-    }
+    });
 });

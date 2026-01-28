@@ -69,8 +69,15 @@
             <button class="btn-cat" data-cat="Filsafat">Filsafat</button>
             <button class="btn-cat" data-cat="Teknologi">Teknologi</button>
             <button class="btn-cat" data-cat="Novel">Novel</button>
+            
+            <button class="btn-cat saved-tab" data-cat="reading">
+                <i class="fas fa-book-open"></i> Sedang Dibaca
+            </button>
+            <button class="btn-cat saved-tab" data-cat="finished">
+                <i class="fas fa-check-double"></i> Selesai
+            </button>
             <button class="btn-cat saved-tab" data-cat="saved">
-                <i class="fas fa-bookmark"></i> Tersimpan
+                <i class="fas fa-bookmark"></i> Semua Tersimpan
             </button>
             
             <a href="upload.html" class="btn-upload-inline">
@@ -95,21 +102,45 @@
                 <div class="modal-info">
                     <div class="modal-badges">
                         <span class="badge-cat" id="modalCategory">Kategori</span>
-                        <span class="badge-rate">⭐ <span id="modalRating">0.0</span></span>
+                        <span class="badge-rate">Rating Global: ⭐ <span id="modalRating">0.0</span></span>
                     </div>
 
                     <h2 id="modalTitle">Judul Buku</h2>
                     <p class="modal-author">Penulis: <span id="modalAuthor">-</span></p>
                     
-                    <div class="modal-actions">
+                    <div class="interaction-area">
+                        <div class="control-group">
+                            <label>Status Bacaan:</label>
+                            <select id="readingStatusSelect" class="status-select">
+                                <option value="none">- Belum Disimpan -</option>
+                                <option value="saved">Akan Dibaca</option>
+                                <option value="reading">Sedang Dibaca</option>
+                                <option value="finished">Sudah Selesai</option>
+                            </select>
                         </div>
+
+                        <div class="control-group">
+                            <label>Rating Kamu:</label>
+                            <div class="star-rating" id="userStarRating">
+                                <i class="far fa-star" data-val="1"></i>
+                                <i class="far fa-star" data-val="2"></i>
+                                <i class="far fa-star" data-val="3"></i>
+                                <i class="far fa-star" data-val="4"></i>
+                                <i class="far fa-star" data-val="5"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                         <button id="btnReadBook" class="btn-primary">Baca Sekarang</button>
+                    </div>
 
                     <div class="personal-notes-section">
                         <div class="notes-header">
                             <h4><i class="fas fa-pen-nib"></i> Catatan Pribadi</h4>
                             <span id="saveStatus" class="save-indicator"><i class="fas fa-check"></i> Tersimpan</span>
                         </div>
-                        <textarea id="noteInput" placeholder="Tulis catatanmu di sini..."></textarea>
+                        <textarea id="noteInput" placeholder="Tulis insight penting dari buku ini..."></textarea>
                         <button id="saveNoteBtn" class="btn-save-note">Simpan Catatan</button>
                     </div>
 

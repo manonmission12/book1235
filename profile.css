@@ -1,117 +1,227 @@
-/* Container Utama */
-.profile-wrapper {
-    padding: 40px 5%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 40px; 
+/* --- 1. SETUP VARIABLES (MONOCHROME & CLEAN) --- */
+:root {
+    /* === LIGHT MODE === */
+    --bg-body: #f8f9fa;      
+    --bg-card: #ffffff;      
+    --bg-stat: #f8f9fa;
+    
+    --text-primary: #111111;    
+    --text-secondary: #666666;  
+    
+    --border: #e0e0e0;          
+    --border-hover: #111111;    
+    
+    --shadow: 0 4px 6px rgba(0,0,0,0.05);
+    
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    
+    --btn-primary-bg: #111111;
+    --btn-primary-text: #ffffff;
+    --btn-hover: #333333;
+
+    --tab-active-border: #111111;
+    --tab-text: #666666;
+    --tab-active-text: #111111;
 }
 
-.profile-container {
-    display: flex; gap: 30px; width: 100%; max-width: 1200px; align-items: flex-start;
+/* === DARK MODE === */
+[data-theme="dark"] {
+    --bg-body: #121212;      
+    --bg-card: #1e1e1e;      
+    --bg-stat: #2d2d2d;
+
+    --text-primary: #ffffff;    
+    --text-secondary: #b0b0b0;  
+
+    --border: #333333;          
+    --border-hover: #ffffff;    
+    
+    --shadow: 0 10px 20px rgba(0,0,0,0.3);
+
+    --nav-bg: rgba(18, 18, 18, 0.95);
+    
+    --btn-primary-bg: #ffffff;
+    --btn-primary-text: #000000;
+    --btn-hover: #e0e0e0;
+
+    --tab-active-border: #ffffff;
+    --tab-text: #888888;
+    --tab-active-text: #ffffff;
 }
 
-/* --- KARTU PROFIL (KIRI) --- */
-.profile-card {
-    background: white;
-    border-radius: 24px;
-    padding: 40px 30px;
-    width: 350px;
-    text-align: center;
-    box-shadow: var(--shadow-soft);
-    flex-shrink: 0;
-    position: sticky; top: 100px;
-    border: 1px solid #f0f0f0;
+/* --- 2. GLOBAL STYLES --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    margin: 0; padding: 0;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Style Elemen Profil */
-.img-container { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
-.big-profile-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #eef2f7; }
-.edit-icon { 
-    position: absolute; bottom: 5px; right: 5px; 
-    background: var(--primary); width: 35px; height: 35px; 
-    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-    cursor: pointer; border: 2px solid white; color: white; font-size: 0.9rem; transition: 0.3s; 
-}
-.edit-icon:hover { transform: scale(1.1); }
+h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; margin: 0; }
 
-#profUser { margin-bottom: 5px; font-size: 1.5rem; color: var(--text-main); font-weight: 700; }
-.badge-member { 
-    background: #fff4e5; color: #ffbc00; 
-    display: inline-block; padding: 5px 12px; border-radius: 20px; 
-    font-size: 0.8rem; margin-bottom: 25px; font-weight: 600;
-}
-
-.profile-stats { display: flex; gap: 15px; margin-bottom: 30px; }
-.stat-box { 
-    flex: 1; background: #f8fafc; 
-    padding: 15px; border-radius: 15px; 
-    border: 1px solid #eee; 
-}
-.stat-box i { font-size: 1.5rem; color: var(--primary); margin-bottom: 10px; }
-.stat-box h4 { font-size: 1.1rem; color: var(--text-main); font-weight: 700; }
-.stat-box .label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
-
-.btn-logout { 
-    width: 100%; padding: 12px; 
-    background: transparent; border: 1px solid var(--danger); 
-    color: var(--danger); border-radius: 10px; 
-    cursor: pointer; transition: 0.3s; font-weight: 600; 
-    display: flex; justify-content: center; align-items: center; gap: 8px; 
-}
-.btn-logout:hover { background: var(--danger); color: white; }
-
-/* --- KANAN: AREA KOLEKSI BUKU --- */
-.my-collection-section {
-    flex-grow: 1;
-    background: white;
-    border-radius: 24px;
-    border: 1px solid #f0f0f0;
-    box-shadow: var(--shadow-soft);
-    padding: 30px;
-    min-height: 500px;
-}
-
-.section-header { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-.section-header h3 { font-size: 1.5rem; color: var(--text-main); margin-bottom: 5px; font-weight: 700; }
-.section-header p { color: var(--text-muted); font-size: 0.9rem; }
-
-/* Grid Buku Profil */
-.saved-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
-}
-
-/* Kartu Buku di Profil */
-.saved-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
+/* --- 3. NAVBAR --- */
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 5%;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 1000;
+    border-bottom: 1px solid var(--border);
     transition: 0.3s;
-    border: 1px solid #eee;
-    display: flex; flex-direction: column;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
-.saved-card:hover { transform: translateY(-5px); border-color: var(--primary); }
-.saved-card img { width: 100%; height: 200px; object-fit: cover; }
-.saved-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-.saved-info h4 { font-size: 0.9rem; margin-bottom: 5px; color: var(--text-main); font-weight: 600; line-height: 1.3; }
-.saved-info p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
 
-/* Tombol Kecil di Kartu */
-.card-actions { display: flex; gap: 8px; margin-top: auto; }
-.btn-mini {
-    flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 0.8rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center;
+.brand {
+    font-size: 1rem; color: var(--text-primary);
+    text-decoration: none; display: flex; align-items: center; gap: 10px;
+    font-weight: 600;
 }
-.btn-read { background: #e0f2fe; color: var(--primary); }
-.btn-read:hover { background: var(--primary); color: white; }
-.btn-remove { background: #fee2e2; color: var(--danger); }
-.btn-remove:hover { background: var(--danger); color: white; }
+.brand i { font-size: 1.1rem; }
 
-@media (max-width: 900px) {
-    .profile-container { flex-direction: column; align-items: center; }
-    .profile-card { max-width: 100%; width: 100%; position: static; }
-    .saved-grid { grid-template-columns: repeat(2, 1fr); }
+.nav-right { display: flex; align-items: center; gap: 15px; }
+
+/* Toggle Button */
+.theme-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-primary); padding: 8px 12px; border-radius: 50px;
+    cursor: pointer; transition: 0.3s;
+}
+.theme-btn:hover { background: var(--border); }
+
+.profile-trigger {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text-primary); font-weight: 600;
+}
+.avatar { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); }
+
+/* --- 4. PROFILE HEADER --- */
+.profile-content { padding: 3rem 5% 5rem; max-width: 1000px; margin: 0 auto; }
+
+.profile-header { display: flex; justify-content: center; margin-bottom: 3rem; }
+
+.profile-card {
+    background: var(--bg-card);
+    width: 100%; max-width: 500px;
+    padding: 40px; border-radius: 20px;
+    border: 1px solid var(--border);
+    text-align: center;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; align-items: center;
+}
+
+.profile-pic-wrapper { position: relative; margin-bottom: 20px; width: 100px; height: 100px; }
+.profile-pic-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+
+.edit-pic-btn {
+    position: absolute; bottom: 0; right: 0;
+    background: var(--text-primary); color: var(--bg-card);
+    border: none; width: 32px; height: 32px; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+}
+
+.profile-card h1 { font-size: 1.5rem; margin-bottom: 5px; color: var(--text-primary); }
+.profile-email { color: var(--text-secondary); margin-bottom: 25px; font-size: 0.95rem; }
+
+.profile-stats {
+    display: flex; gap: 40px; justify-content: center; margin-bottom: 30px;
+    width: 100%;
+}
+
+.stat-box {
+    display: flex; flex-direction: column; align-items: center;
+}
+.stat-num { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); }
+.stat-label { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+.btn-outline-danger {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-primary); padding: 10px 24px; border-radius: 8px;
+    cursor: pointer; font-weight: 600; transition: 0.2s;
+    font-size: 0.9rem;
+}
+.btn-outline-danger:hover { background: var(--text-primary); color: var(--bg-card); }
+
+/* --- 5. TABS --- */
+.profile-tabs {
+    display: flex; justify-content: center; gap: 30px; margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+    background: transparent; border: none;
+    padding: 15px 20px; font-size: 1rem; font-weight: 600;
+    color: var(--tab-text); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    color: var(--tab-active-text);
+    border-bottom-color: var(--tab-active-border);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+
+/* --- 6. BOOK GRID --- */
+.book-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;
+}
+
+.book-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; transition: 0.3s;
+}
+.book-card:hover { transform: translateY(-5px); border-color: var(--border-hover); }
+
+.book-card img {
+    width: 100%; height: 260px; object-fit: cover;
+    border-bottom: 1px solid var(--border);
+}
+[data-theme="dark"] .book-card img { opacity: 0.9; }
+
+.book-info { padding: 15px; text-align: left; }
+.book-info h3 { font-size: 1rem; color: var(--text-primary); margin-bottom: 5px; }
+.book-info p { font-size: 0.85rem; color: var(--text-secondary); }
+
+.empty-state {
+    grid-column: 1/-1; text-align: center; padding: 40px;
+    color: var(--text-secondary);
+}
+.empty-state i { font-size: 2rem; margin-bottom: 15px; opacity: 0.5; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========================================= */
+/* --- 7. MOBILE RESPONSIVE (MEDIA QUERIES) --- */
+/* ========================================= */
+
+@media (max-width: 768px) {
+    /* Profile Navbar */
+    .navbar { padding: 1rem 5%; }
+    .user-name { display: none; }
+
+    /* Profile Card Responsive */
+    .profile-card { 
+        padding: 30px 20px; 
+        border-radius: 15px; 
+        box-shadow: none; border-left: none; border-right: none;
+        max-width: 100%;
+    }
+    
+    .profile-stats { gap: 20px; justify-content: space-around; }
+    
+    /* Tabs Responsive */
+    .profile-tabs { gap: 10px; }
+    .tab-btn { padding: 12px 10px; font-size: 0.9rem; flex: 1; text-align: center; }
+
+    /* Grid Buku di Profile */
+    .book-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+        gap: 15px;
+    }
+    .book-card img { height: 200px; }
 }

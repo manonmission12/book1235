@@ -1,18 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 0. LOGIKA DARK MODE ---
+    // --- 0. DARK MODE LOGIC ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
     const icon = themeToggle.querySelector('i');
 
-    // Cek LocalStorage saat load
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         root.setAttribute('data-theme', 'dark');
         icon.classList.replace('fa-moon', 'fa-sun');
     }
 
-    // Event Listener Tombol Toggle
     themeToggle.addEventListener('click', () => {
         const currentTheme = root.getAttribute('data-theme');
         if (currentTheme === 'dark') {
@@ -34,6 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     const SAVED_KEY = `savedBooks_${currentUser}`;
+    const RATINGS_KEY = `ratings_${currentUser}`;
+
     const userDisplay = document.getElementById('userDisplay');
     if(userDisplay) userDisplay.innerText = `Halo, ${currentUser}`;
 
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "B8", title: "Marketing 4.0", author: "Philip Kotler", category: "Bisnis", rating: 4.7, img: "covers/marketing 4.0.png", pdf: "books/8. Marketing 4.0.pdf" },
         { id: "B9", title: "Marketing in Crisis", author: "Rhenald Kasal", category: "Bisnis", rating: 4.5, img: "covers/marketing in crisis.png", pdf: "books/9. Marketing in Crisis.pdf" },
         { id: "B10", title: "Mindset", author: "Dr. Carol S. Dweck", category: "Self-Improvement", rating: 4.3, img: "covers/mindset.png", pdf: "books/10. Mindset.pdf" },
-        { id: "B11", title: "Bodo Amat", author: "Mark Manson", category: "Self-Improvement", rating: 4.6, img: "covers/sebuah seni untuk bersikap bodo amat.png", pdf: "books/11. Sebuah Seni untuk Bersikap Bodo Amat.pdf" },
+        { id: "B11", title: "Sebuah Seni Untuk Bersikap Bodo Amat", author: "Mark Manson", category: "Self-Improvement", rating: 4.6, img: "covers/sebuah seni untuk bersikap bodo amat.png", pdf: "books/11. Sebuah Seni untuk Bersikap Bodo Amat.pdf" },
         { id: "B12", title: "Thinking, Fast & Slow", author: "Daniel Kahneman", category: "Self-Improvement", rating: 4.7, img: "covers/thinking fast and slow.png", pdf: "books/12. Thinking, fast and slow.pdf" },
         { id: "B13", title: "Grit", author: "Angela Duckworth", category: "Self-Improvement", rating: 4.5, img: "covers/grit.png", pdf: "books/grit.pdf" },
         { id: "B14", title: "Show Your Work", author: "Austin Kleon", category: "Self-Improvement", rating: 4.8, img: "covers/Show Your Work.png", pdf: "books/14. Show your work.pdf" },
@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(container);
         }
         const toast = document.createElement('div');
-        // Warna toast tetap hitam putih
         
         toast.style.cssText = `
             background: var(--text-primary); color: var(--bg-card); 
@@ -114,14 +113,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'book-card';
             
-            // HAPUS SEMUA LOGIKA WARNA RANDOM
-
             const imgSrc = book.img || book.image; 
             
+            // Cek status selesai untuk centang
+            let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+            const savedItem = savedList.find(item => item.id === book.id);
+            const isFinished = savedItem && savedItem.status === 'finished';
+
             card.innerHTML = `
                 <img src="${imgSrc}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Cover'">
                 <div class="book-info">
-                    <h3>${book.title}</h3>
+                    <h3>${book.title} ${isFinished ? '<i class="fas fa-check-circle" style="font-size:0.8rem; margin-left:5px;"></i>' : ''}</h3>
                     <p>${book.author}</p>
                     
                     <div class="card-footer">
@@ -137,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderBooks(allBooks); 
 
-    // --- 5. SEARCH & FILTER ---
+    // --- 5. SEARCH & FILTER (DIPERBARUI) ---
     if (searchBar) {
         searchBar.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
@@ -152,19 +154,29 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             categoryBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
             const cat = btn.getAttribute('data-cat');
             
-            if (cat === 'all') renderBooks(allBooks);
-            else if (cat === 'saved') {
+            // --- LOGIKA FILTER BARU ---
+            if (cat === 'all') {
+                renderBooks(allBooks);
+            } else if (cat === 'saved') {
+                // Tampilkan semua yg tersimpan
                 const mySaved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
                 renderBooks(mySaved, true);
+            } else if (cat === 'reading' || cat === 'finished') {
+                // Filter spesifik berdasarkan status
+                const mySaved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+                const filtered = mySaved.filter(b => b.status === cat);
+                renderBooks(filtered, true);
             } else {
+                // Filter kategori biasa
                 renderBooks(allBooks.filter(b => b.category === cat));
             }
         });
     });
 
-    // --- 6. MODAL & NOTES ---
+    // --- 6. MODAL & INTERAKSI ---
     const modal = document.getElementById('detailModal');
 
     function openModal(book) {
@@ -176,58 +188,83 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalCategory').innerText = book.category;
         document.getElementById('modalRating').innerText = book.rating;
         
-        const btnContainer = document.querySelector('.modal-actions');
-        btnContainer.innerHTML = ''; 
+        // --- LOGIKA STATUS BACA ---
+        const statusSelect = document.getElementById('readingStatusSelect');
+        let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+        const existingItem = savedList.find(item => item.id === book.id);
+        
+        statusSelect.value = existingItem ? (existingItem.status || 'saved') : 'none';
 
-        // Read Button
-        const btnRead = document.createElement('button');
-        btnRead.className = 'btn-primary';
-        btnRead.innerHTML = 'Baca Sekarang';
+        statusSelect.onchange = (e) => {
+            const newStatus = e.target.value;
+            savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+            const index = savedList.findIndex(item => item.id === book.id);
+
+            if (newStatus === 'none') {
+                if (index !== -1) {
+                    savedList.splice(index, 1);
+                    showToast('Dihapus dari koleksi');
+                }
+            } else {
+                if (index !== -1) {
+                    savedList[index].status = newStatus;
+                } else {
+                    const newBook = { ...book, status: newStatus };
+                    savedList.push(newBook);
+                }
+                showToast('Status diperbarui!');
+            }
+            
+            localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
+            
+            // --- REFRESH SESUAI TAB AKTIF ---
+            const activeCat = document.querySelector('.btn-cat.active').getAttribute('data-cat');
+            
+            if (activeCat === 'saved') {
+                renderBooks(savedList, true);
+            } else if (activeCat === 'reading' || activeCat === 'finished') {
+                 // Refresh filter status
+                 renderBooks(savedList.filter(b => b.status === activeCat), true);
+            } else {
+                renderBooks(allBooks); 
+            }
+        };
+
+        // --- RATING & NOTES SAMA SEPERTI SEBELUMNYA ---
+        const stars = document.querySelectorAll('#userStarRating i');
+        let userRatings = JSON.parse(localStorage.getItem(RATINGS_KEY) || '{}');
+        let currentRating = userRatings[book.id] || 0;
+
+        const updateStarDisplay = (rating) => {
+            stars.forEach(s => {
+                const sVal = parseInt(s.getAttribute('data-val'));
+                if (sVal <= rating) {
+                    s.classList.remove('far'); s.classList.add('fas', 'active');
+                } else {
+                    s.classList.remove('fas', 'active'); s.classList.add('far');
+                }
+            });
+        };
+        updateStarDisplay(currentRating);
+
+        stars.forEach(star => {
+            star.onclick = () => {
+                const val = parseInt(star.getAttribute('data-val'));
+                currentRating = val;
+                userRatings[book.id] = val;
+                localStorage.setItem(RATINGS_KEY, JSON.stringify(userRatings));
+                updateStarDisplay(val);
+                showToast(`Kamu memberi rating ${val} bintang!`);
+            };
+        });
+
+        const btnRead = document.getElementById('btnReadBook');
         btnRead.onclick = () => {
             const pdfLink = book.file || book.pdf; 
             if (pdfLink) window.open(pdfLink, '_blank');
             else showToast('PDF tidak tersedia', 'error');
         };
-        btnContainer.appendChild(btnRead);
 
-        // Save Button (Monochrome Style)
-        let savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
-        const isSaved = savedList.some(item => item.id === book.id);
-        
-        const btnSave = document.createElement('button');
-        
-        const updateSaveBtn = (saved) => {
-            btnSave.className = 'btn-primary'; 
-            btnSave.style.background = 'transparent';
-            btnSave.style.border = '1px solid var(--text-primary)';
-            btnSave.style.color = 'var(--text-primary)';
-            // Teks saja yang berubah
-            btnSave.innerHTML = saved ? '<i class="fas fa-check"></i> Tersimpan' : '<i class="far fa-bookmark"></i> Simpan';
-        };
-        updateSaveBtn(isSaved);
-
-        btnSave.onclick = () => {
-            savedList = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
-            const index = savedList.findIndex(item => item.id === book.id);
-            
-            if (index !== -1) {
-                savedList.splice(index, 1);
-                showToast('Dihapus dari koleksi');
-                updateSaveBtn(false);
-            } else {
-                savedList.push(book);
-                showToast('Disimpan ke koleksi');
-                updateSaveBtn(true);
-            }
-            localStorage.setItem(SAVED_KEY, JSON.stringify(savedList));
-            
-            if (document.querySelector('.btn-cat.active').getAttribute('data-cat') === 'saved') {
-                renderBooks(savedList, true);
-            }
-        };
-        btnContainer.appendChild(btnSave);
-
-        // Notes Logic
         const noteInput = document.getElementById('noteInput');
         const saveNoteBtn = document.getElementById('saveNoteBtn');
         const saveStatus = document.getElementById('saveStatus');

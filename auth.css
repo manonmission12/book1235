@@ -30,9 +30,9 @@
     flex: 1; padding: 4rem; display: flex; flex-direction: column; justify-content: center;
     background: rgba(255, 255, 255, 0.6); /* Lebih transparan dari sebelumnya */
     backdrop-filter: blur(20px);
-    border-radius: 30px;
+    border-radius: 40px;
     border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.597);
     transition: transform 0.3s ease;
 }
 
@@ -45,7 +45,7 @@
   40%, 60% { transform: translate3d(6px, 0, 0); }
 }
 
-.login-form-section h2 { font-size: 2rem; margin-bottom: 30px; color: var(--text-main); font-weight: 700; }
+.login-form-section h2 { font-size: 2rem; margin-bottom: 30px; color: black; font-weight: 700; }
 .input-group { margin-bottom: 1.5rem; }
 .input-group label { display: block; margin-bottom: 0.8rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
 

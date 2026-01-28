@@ -1,117 +1,146 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // 1. Cek Login User
-    const user = localStorage.getItem('currentUser');
-    if (!user) {
+
+    // --- 0. DARK MODE LOGIC ---
+    const themeToggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const icon = themeToggle.querySelector('i');
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            root.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            icon.classList.replace('fa-sun', 'fa-moon');
+        } else {
+            root.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        }
+    });
+
+    // --- 1. AUTH CHECK ---
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
         window.location.href = 'index.html';
         return;
     }
-    
-    // Tampilkan User di Navbar
-    const userDisplay = document.getElementById('userDisplay');
-    if(userDisplay) userDisplay.innerText = `Halo, ${user}`;
-    
-    const savedPhoto = localStorage.getItem(`profilePic_${user}`);
-    if (savedPhoto) {
-        document.querySelector('.avatar').src = savedPhoto;
-    }
+    document.getElementById('userDisplay').innerText = currentUser;
+    const savedPhoto = localStorage.getItem(`profilePic_${currentUser}`);
+    if (savedPhoto) document.querySelector('.avatar').src = savedPhoto;
 
-    // 2. Fitur Preview Gambar Cover
-    const coverInput = document.getElementById('bookCover');
-    const preview = document.getElementById('coverPreview');
-    
-    if(coverInput) {
-        coverInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-    }
+    // --- 2. DRAG & DROP LOGIC ---
+    const dropZoneElement = document.getElementById('dropZone');
+    const inputElement = dropZoneElement.querySelector('.drop-zone__input');
+    let finalBase64Img = null;
 
-    // 3. Proses Submit Form (Upload)
-    const form = document.querySelector('.upload-form');
-    if(form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Ambil nilai dari input
-            const title = document.getElementById('bookTitle').value;
-            const author = document.getElementById('bookAuthor').value;
-            const category = document.getElementById('bookCategory').value;
-            const desc = document.getElementById('bookDesc').value;
-            
-            const coverFile = document.getElementById('bookCover').files[0];
-            const pdfFile = document.getElementById('bookFile').files[0];
+    dropZoneElement.addEventListener('click', () => inputElement.click());
 
-            if(coverFile && pdfFile) {
-                // Baca file Cover dulu
-                const readerCover = new FileReader();
-                readerCover.onload = function(eCover) {
-                    
-                    // Setelah cover terbaca, baca file PDF
-                    const readerPdf = new FileReader();
-                    readerPdf.onload = function(ePdf) {
-                        
-                        // Buat Objek Buku Baru
-                        const newBook = {
-                            id: 'U' + Date.now(), // ID unik berdasarkan waktu
-                            title: title,
-                            author: author,
-                            category: category,
-                            desc: desc,
-                            rating: 5.0, // Rating default
-                            image: eCover.target.result, // Simpan gambar (Base64)
-                            file: ePdf.target.result,    // Simpan PDF (Base64)
-                            uploadedBy: user,
-                            date: new Date().toLocaleDateString()
-                        };
-
-                        // Simpan ke LocalStorage
-                        let myBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
-                        myBooks.push(newBook);
-                        localStorage.setItem('myUploadedBooks', JSON.stringify(myBooks));
-
-                        alert('Buku berhasil diterbitkan! 📚');
-                        window.location.href = 'dashboard.html';
-                    };
-                    
-                    // Mulai baca PDF
-                    readerPdf.readAsDataURL(pdfFile);
-                };
-                
-                // Mulai baca Cover
-                readerCover.readAsDataURL(coverFile);
-            } else {
-                alert('Mohon lengkapi file Cover dan PDF.');
-            }
-        });
-    }
-
-    // 4. Logika Dropdown Navbar
-    const trigger = document.getElementById('profileTrigger');
-    const menu = document.getElementById('profileDropdown');
-    
-    if(trigger && menu) {
-        trigger.onclick = (e) => { 
-            e.stopPropagation(); 
-            menu.classList.toggle('active'); 
+    inputElement.addEventListener('change', (e) => {
+        if (inputElement.files.length) {
+            updateThumbnail(dropZoneElement, inputElement.files[0]);
         }
-        window.onclick = () => menu.classList.remove('active');
+    });
+
+    dropZoneElement.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZoneElement.classList.add('drop-zone--over');
+    });
+
+    ['dragleave', 'dragend'].forEach(type => {
+        dropZoneElement.addEventListener(type, () => {
+            dropZoneElement.classList.remove('drop-zone--over');
+        });
+    });
+
+    dropZoneElement.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length) {
+            inputElement.files = e.dataTransfer.files;
+            updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+        }
+        dropZoneElement.classList.remove('drop-zone--over');
+    });
+
+    function updateThumbnail(dropZone, file) {
+        let thumbnailElement = dropZone.querySelector('.drop-zone__thumb');
+
+        // Hapus prompt text jika ada
+        if (dropZone.querySelector('.drop-zone__prompt')) {
+            dropZone.querySelector('.drop-zone__prompt').remove();
+        }
+
+        // Buat elemen thumbnail jika belum ada
+        if (!thumbnailElement) {
+            thumbnailElement = document.createElement('div');
+            thumbnailElement.classList.add('drop-zone__thumb');
+            dropZone.appendChild(thumbnailElement);
+        }
+
+        thumbnailElement.dataset.label = file.name;
+
+        // Baca file gambar
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            finalBase64Img = reader.result;
+            thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+        };
     }
 
-    const logoutBtn = document.getElementById('logoutBtn');
-    if(logoutBtn) {
-        logoutBtn.onclick = () => {
-            if(confirm('Yakin ingin logout?')) {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
-            }
+    // --- 3. FORM SUBMIT ---
+    const uploadForm = document.getElementById('uploadForm');
+
+    uploadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Ambil Data
+        const title = document.getElementById('bookTitle').value;
+        const author = document.getElementById('bookAuthor').value;
+        const category = document.getElementById('bookCategory').value;
+        const link = document.getElementById('bookLink').value;
+
+        if (!finalBase64Img) {
+            alert("Harap upload cover buku!");
+            return;
         }
-    }
+
+        // Buat Objek Buku
+        const newBook = {
+            id: 'U' + Date.now(),
+            title: title,
+            author: author,
+            category: category,
+            rating: 0, // Default rating
+            img: finalBase64Img,
+            pdf: link,
+            isUploaded: true,
+            uploadedBy: currentUser
+        };
+
+        // Simpan ke LocalStorage 'myUploadedBooks'
+        let myUploads = [];
+        try {
+            myUploads = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
+        } catch (e) { myUploads = []; }
+
+        myUploads.push(newBook);
+        localStorage.setItem('myUploadedBooks', JSON.stringify(myUploads));
+
+        // Feedback & Redirect
+        // Tampilkan Toast (Manual sederhana karena redirect cepat)
+        const btn = document.querySelector('.btn-submit');
+        btn.innerText = "Berhasil!";
+        btn.style.background = "#27ae60";
+        
+        setTimeout(() => {
+            window.location.href = 'profile.html'; // Redirect ke profil untuk melihat hasil
+        }, 1000);
+    });
+
 });

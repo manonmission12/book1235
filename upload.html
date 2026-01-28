@@ -4,94 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Buku - Era Baru Membaca</title>
+    
     <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="upload.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Style khusus halaman upload */
-        .upload-wrapper { padding: 2rem; max-width: 600px; margin: 40px auto; animation: fadeInUp 0.6s ease; }
-        .preview-img { width: 100px; height: 140px; object-fit: cover; border-radius: 8px; display: none; margin-top: 10px; border: 2px solid var(--primary); }
-        .btn-cancel { background: transparent; border: 1px solid var(--danger); color: var(--danger); margin-top: 10px; }
-        .btn-cancel:hover { background: var(--danger); color: white; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="dashboard.html" class="brand">Era Baru Membaca</a>
+        <a href="dashboard.html" class="brand">
+            <i class="fas fa-arrow-left"></i>
+            <span>Kembali</span>
+        </a>
         
-        <div class="profile-menu">
-            <div class="profile-trigger" id="profileTrigger">
-                <span id="userDisplay">Halo, User</span>
+        <div class="nav-right">
+            <button id="themeToggle" class="theme-btn" title="Ganti Tema">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <div class="profile-trigger">
+                <span id="userDisplay" class="user-name">User</span>
                 <img src="https://ui-avatars.com/api/?background=random&color=fff" class="avatar" alt="Profil">
-            </div>
-            
-            <div class="dropdown-menu" id="profileDropdown">
-                <a href="profile.html" class="dropdown-item">
-                    <i class="fas fa-user"></i> Profil Saya
-                </a>
-                <a href="profile.html#koleksi" class="dropdown-item">
-                    <i class="fas fa-bookmark"></i> Koleksi Saya
-                </a>
-                <a href="upload.html" class="dropdown-item">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload Buku
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" id="logoutBtn" class="dropdown-item" style="color: #ff4d4d;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
             </div>
         </div>
     </nav>
 
-    <main class="upload-wrapper">
-        <div class="login-form-section" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
-            <form class="upload-form">
-                <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary);">Upload Buku Baru</h2>
+    <main class="upload-content">
+        <div class="upload-card">
+            <div class="card-header">
+                <h1>Upload Buku Baru</h1>
+                <p>Bagikan wawasanmu kepada dunia.</p>
+            </div>
+
+            <form id="uploadForm">
                 
-                <div class="input-group">
+                <div class="form-group">
+                    <label>Cover Buku</label>
+                    <div class="drop-zone" id="dropZone">
+                        <span class="drop-zone__prompt">
+                            <i class="fas fa-cloud-upload-alt"></i><br>
+                            Seret gambar ke sini atau klik untuk upload
+                        </span>
+                        <input type="file" name="cover" class="drop-zone__input" accept="image/*" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>Judul Buku</label>
-                    <input type="text" id="bookTitle" required placeholder="Contoh: Atomic Habits" style="color: white;">
+                    <input type="text" id="bookTitle" placeholder="Contoh: The Psychology of Money" required>
                 </div>
 
-                <div class="input-group">
-                    <label>Penulis</label>
-                    <input type="text" id="bookAuthor" required placeholder="Nama Penulis" style="color: white;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Penulis</label>
+                        <input type="text" id="bookAuthor" placeholder="Nama Penulis" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select id="bookCategory">
+                            <option value="Bisnis">Bisnis</option>
+                            <option value="Self-Improvement">Self-Improvement</option>
+                            <option value="Filsafat">Filsafat</option>
+                            <option value="Teknologi">Teknologi</option>
+                            <option value="Novel">Novel</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label>Kategori</label>
-                    <select id="bookCategory" style="width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
-                        <option value="Teknologi" style="color: black;">Teknologi</option>
-                        <option value="Novel" style="color: black;">Novel</option>
-                        <option value="Bisnis" style="color: black;">Bisnis</option>
-                        <option value="Filsafat" style="color: black;">Filsafat</option>
-                        <option value="Self-Improvement" style="color: black;">Self-Improvement</option>
-                    </select>
+                <div class="form-group">
+                    <label>Link File PDF (Google Drive/URL)</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-link"></i>
+                        <input type="url" id="bookLink" placeholder="https://..." required>
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label>Cover Buku (Gambar)</label>
-                    <input type="file" id="bookCover" accept="image/*" required style="color: white;">
-                    <img id="coverPreview" class="preview-img">
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="window.location.href='dashboard.html'">Batal</button>
+                    <button type="submit" class="btn-submit">Publikasikan Buku</button>
                 </div>
 
-                <div class="input-group">
-                    <label>File Buku (PDF)</label>
-                    <input type="file" id="bookFile" accept="application/pdf" required style="color: white;">
-                </div>
-
-                <div class="input-group">
-                    <label>Deskripsi Singkat</label>
-                    <textarea id="bookDesc" rows="4" placeholder="Ceritakan sedikit tentang bukumu..." style="width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);"></textarea>
-                </div>
-
-                <button type="submit" class="login-button">🚀 Terbitkan Buku</button>
-                <button type="button" class="login-button btn-cancel" onclick="window.location.href='dashboard.html'">Batal</button>
             </form>
         </div>
     </main>
+    
+    <div id="toast-container"></div>
 
     <script src="upload-script.js"></script>
 </body>
