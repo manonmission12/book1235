@@ -43,11 +43,10 @@
     --shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
-/* --- 2. LAYOUT FIX (PENTING!) --- */
+/* --- 2. LAYOUT FIX --- */
 html, body {
     margin: 0; padding: 0;
-    height: 100%; /* Pastikan full height */
-    width: 100%;  /* Pastikan full width */
+    height: 100%; width: 100%;
 }
 
 body {
@@ -55,37 +54,45 @@ body {
     background-color: var(--bg-body);
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
-    
-    /* Flex Column untuk Sticky Footer */
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden; /* Mencegah scroll samping */
+    display: flex; flex-direction: column; overflow-x: hidden;
 }
 
-/* Agar Navbar, Main, dan Footer tidak menyusut */
-header, nav, main, footer {
-    width: 100%;
-    box-sizing: border-box; /* Agar padding tidak menambah lebar */
-}
+header, nav, main, footer { width: 100%; box-sizing: border-box; }
 
-main {
-    flex: 1 0 auto; /* Mendorong footer ke bawah, tapi konten tidak gepeng */
-    display: block; /* Pastikan main tetap block element */
-}
+main { flex: 1 0 auto; display: block; }
 
 h1, h2, h3, h4, .brand {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700; margin: 0;
 }
 
-/* --- 3. FOOTER STYLE --- */
+/* --- 3. NAVBAR STYLES (UPDATED) --- */
+/* Style untuk Link Navigasi Tengah (Beranda & Profil) */
+.nav-links {
+    display: flex; gap: 30px;
+    position: absolute; left: 50%; transform: translateX(-50%); /* Posisi tepat di tengah layar */
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600; font-size: 0.95rem;
+    position: relative; transition: 0.3s;
+}
+
+.nav-link:hover { color: var(--text-primary); }
+
+.nav-link.active { color: var(--text-primary); }
+.nav-link.active::after {
+    content: ''; position: absolute; bottom: -5px; left: 0;
+    width: 100%; height: 2px; background: var(--text-primary); border-radius: 2px;
+}
+
+/* --- 4. FOOTER STYLE --- */
 .main-footer {
-    flex-shrink: 0; /* Jangan sampai footer kegencet */
-    background: var(--bg-card);
-    border-top: 1px solid var(--border);
-    padding: 40px 20px;
-    text-align: center;
-    margin-top: 50px;
+    flex-shrink: 0;
+    background: var(--bg-card); border-top: 1px solid var(--border);
+    padding: 40px 20px; text-align: center; margin-top: 50px;
 }
 
 .footer-content {
@@ -96,24 +103,19 @@ h1, h2, h3, h4, .brand {
 .footer-brand {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700; font-size: 1.2rem;
-    display: flex; align-items: center; gap: 10px;
-    color: var(--text-primary);
+    display: flex; align-items: center; gap: 10px; color: var(--text-primary);
 }
 
-.footer-links {
-    display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
-}
-
-.footer-links a {
-    color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: 0.2s;
-}
+.footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: 0.2s; }
 .footer-links a:hover { color: var(--text-primary); }
 
-.copyright {
-    color: var(--text-secondary); font-size: 0.85rem; opacity: 0.8;
-}
+.copyright { color: var(--text-secondary); font-size: 0.85rem; opacity: 0.8; }
 
-/* Responsive Footer */
-@media (max-width: 600px) {
+/* Responsive */
+@media (max-width: 768px) {
     .main-footer { padding: 30px 20px; }
+    
+    /* Sembunyikan navigasi teks di HP agar tidak sempit (akses lewat ikon/logo) */
+    .nav-links { display: none; } 
 }

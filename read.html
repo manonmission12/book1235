@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Baca - Era Baru Membaca</title>
+    
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="read.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="reader-nav">
+        <div class="nav-left">
+            <a href="dashboard.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i> <span class="mobile-hide">Kembali</span>
+            </a>
+            <span class="book-title-display" id="displayTitle">Memuat Buku...</span>
+        </div>
+        
+        <div class="nav-right">
+            <button id="fullscreenBtn" class="tool-btn" title="Layar Penuh">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button id="themeToggle" class="tool-btn" title="Ganti Tema">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="reader-container">
+        <iframe id="pdfViewer" src="" frameborder="0"></iframe>
+        
+        <div id="pdfError" class="pdf-error" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Browser kamu tidak mendukung preview PDF langsung.</p>
+            <a href="#" id="fallbackLink" target="_blank" class="btn-download">Buka PDF di Tab Baru</a>
+        </div>
+    </main>
+
+    <script src="read-script.js"></script>
+</body>
+</html>

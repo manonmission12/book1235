@@ -131,7 +131,7 @@
     display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow);
 }
 .book-card:hover { transform: translateY(-5px); border-color: var(--border-hover); }
-.book-card img { width: 100%; height: 260px; object-fit: cover; border-bottom: 1px solid var(--border); }
+.book-card img { width: 100%; height: 350px; object-fit: cover; border-bottom: 1px solid var(--border); }
 [data-theme="dark"] .book-card img { opacity: 0.85; border-bottom: 1px solid #333; }
 .book-card:hover img { opacity: 1; }
 
