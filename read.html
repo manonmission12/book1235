@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Reader Pro - Era Baru Membaca</title>
+    <title>Smart Reader Pro</title>
     
     <link rel="stylesheet" href="global.css">
     
@@ -11,19 +11,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-
+    
     <link rel="stylesheet" href="read.css">
 </head>
 <body>
 
     <nav class="reader-nav">
         <div class="nav-left">
-            <a href="dashboard.html" class="btn-back">
-                <i class="fas fa-arrow-left"></i>
-            </a>
+            <a href="dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i></a>
             <div class="book-meta">
-                <span id="displayTitle" class="title">Memuat Buku...</span>
+                <span id="displayTitle" class="title">Memuat...</span>
                 <span id="pageInfo" class="page-info">Hal 0 / 0</span>
             </div>
         </div>
@@ -45,36 +42,36 @@
                 <span id="zoomLevel">120%</span>
                 <button id="zoomIn" class="tool-btn"><i class="fas fa-plus"></i></button>
             </div>
-
             <button id="sepiaToggle" class="tool-btn" title="Mode Sepia"><i class="fas fa-eye"></i></button>
-            <button id="highlightBtn" class="tool-btn highlight-mode" title="Stabilo Teks">
-                <i class="fas fa-highlighter"></i>
-            </button>
-            <button id="toggleSidebarBtn" class="tool-btn" title="Buka Catatan">
-                <i class="fas fa-list-ul"></i>
-            </button>
-            <button id="themeToggle" class="tool-btn" title="Ganti Tema">
-                <i class="fas fa-moon"></i>
-            </button>
+            <button id="highlightBtn" class="tool-btn highlight-mode" title="Stabilo"><i class="fas fa-highlighter"></i></button>
+            <button id="toggleSidebarBtn" class="tool-btn active" title="Catatan"><i class="fas fa-list-ul"></i></button>
+            <button id="themeToggle" class="tool-btn" title="Tema"><i class="fas fa-moon"></i></button>
         </div>
     </nav>
 
     <div class="main-reader-layout">
         <main class="pdf-container" id="pdfContainer">
+            
             <div id="pdfWrapper" class="pdf-wrapper">
+                
+                <div id="loadingOverlay" class="loading-overlay">
+                    <div class="spinner"></div>
+                </div>
+
                 <canvas id="the-canvas"></canvas>
+                
                 <div id="text-layer" class="textLayer"></div>
+
             </div>
+
         </main>
 
-        <aside class="sidebar-notes hidden" id="sidebarNotes">
+        <aside class="sidebar-notes" id="sidebarNotes">
             <div class="sidebar-header">
                 <h3><i class="fas fa-pen-nib"></i> Highlight</h3>
-                <button id="clearHighlights" class="btn-text-danger">Hapus Semua</button>
+                <button id="clearHighlights" class="btn-text-danger">Hapus</button>
             </div>
-            <div id="highlightsList" class="highlights-list">
-                <div class="empty-highlight"><p>Belum ada highlight.</p></div>
-            </div>
+            <div id="highlightsList" class="highlights-list"></div>
         </aside>
     </div>
 

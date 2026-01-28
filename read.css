@@ -1,109 +1,117 @@
-/* --- READER LAYOUT --- */
+/* --- LAYOUT UTAMA --- */
 body {
-    overflow: hidden;
-    height: 100vh;
+    margin: 0; padding: 0; height: 100vh;
     display: flex; flex-direction: column;
-    margin: 0; 
-    background-color: var(--bg-body); 
-    color: var(--text-primary);
+    background-color: var(--bg-body, #f8f9fa); /* Menggunakan Variabel Global */
+    color: var(--text-primary, #333);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
 }
 
 /* NAVBAR */
 .reader-nav {
-    height: 65px; flex-shrink: 0;
-    background: var(--bg-card); 
-    border-bottom: 1px solid var(--border);
+    height: 60px; flex-shrink: 0;
+    background: var(--bg-card, #fff);
+    border-bottom: 1px solid var(--border, #ddd);
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0 20px; box-shadow: var(--shadow); z-index: 1000;
+    padding: 0 20px; z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.nav-left, .nav-right { width: 30%; display: flex; align-items: center; }
-.nav-center { width: 40%; display: flex; justify-content: center; gap: 15px; }
-
-.book-meta .title { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
-.book-meta .page-info { font-size: 0.75rem; color: var(--text-secondary); }
-
-/* Search Container */
-.search-container {
-    display: flex; align-items: center; 
-    background: var(--bg-input);
-    border: 1px solid var(--border); 
-    border-radius: 20px; padding: 0 15px; height: 38px;
-}
-.search-container input {
-    border: none; background: transparent; color: var(--text-primary);
-    padding: 0 8px; font-size: 0.85rem; outline: none; width: 140px;
-}
-
-/* Zoom & Tools */
-.zoom-controls { display: flex; align-items: center; gap: 8px; margin-right: 15px; }
-#zoomLevel { font-size: 0.8rem; font-weight: 700; width: 45px; text-align: center; }
-
+.nav-center { display: flex; gap: 15px; }
 .tool-btn, .nav-btn {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-primary); padding: 8px; border-radius: 8px;
-    cursor: pointer; transition: 0.2s;
+    background: transparent; border: 1px solid var(--border, #ddd);
+    padding: 8px; cursor: pointer; border-radius: 6px;
+    color: var(--text-primary, #333); transition: 0.2s;
 }
-.tool-btn:hover, .nav-btn:hover { background: var(--border); }
-.tool-btn.active { background: var(--text-primary); color: var(--bg-card); }
+.tool-btn:hover, .nav-btn:hover { background: var(--border, #eee); }
 .highlight-mode { color: #f1c40f; border-color: #f1c40f; }
 
-/* LAYOUT UTAMA */
+/* SEARCH & ZOOM */
+.search-container {
+    background: var(--bg-input, #f0f2f5);
+    padding: 5px 12px; border-radius: 20px;
+    display: flex; align-items: center; border: 1px solid var(--border, transparent);
+}
+.search-container input {
+    border: none; background: transparent; outline: none;
+    width: 120px; margin-left: 8px; color: var(--text-primary, #333);
+}
+#zoomLevel { font-size: 0.8rem; font-weight: bold; width: 45px; text-align: center; }
+
+/* --- AREA PDF --- */
 .main-reader-layout { flex: 1; display: flex; overflow: hidden; position: relative; }
 
-.pdf-container { 
-    flex: 1; 
-    background: #525659; 
-    overflow: auto; 
-    display: flex; justify-content: center; padding: 30px; 
+.pdf-container {
+    flex: 1;
+    background: #525659; /* Warna abu-abu gelap standar reader */
+    overflow: auto;
+    display: flex; justify-content: center; padding: 40px;
 }
 
-.pdf-wrapper { 
-    position: relative; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-    margin: 0 auto; 
-    background: white; 
+/* WRAPPER (Tempat Efek 3D) */
+.pdf-wrapper {
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin: 0 auto;
+    background: white;
+    perspective: 2500px; /* Perspektif 3D */
+    transform-style: preserve-3d;
 }
 
-#the-canvas { display: block; z-index: 1; }
+/* CANVAS (Kertas) */
+#the-canvas {
+    display: block;
+    transform-origin: left center; /* Engsel di kiri */
+    transition: transform 0.4s ease-in-out;
+    backface-visibility: hidden;
+    z-index: 1;
+}
 
-/* --- SELEKSI TEKS (STABILO BIRU) --- */
-.textLayer { 
-    position: absolute; left: 0; top: 0; right: 0; bottom: 0; 
-    overflow: hidden; opacity: 1; line-height: 1.0; z-index: 99; 
+/* ANIMASI 3D */
+.page-turning-next { transform: rotateY(-90deg); opacity: 0.8; }
+.page-turning-prev { transform: rotateY(90deg); opacity: 0.8; }
+
+/* TEXT LAYER (Stabilo) */
+.textLayer {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    overflow: hidden; opacity: 1; line-height: 1.0;
+    z-index: 10; /* Di atas canvas */
     pointer-events: auto !important;
 }
-
-.textLayer span { 
-    color: transparent; position: absolute; white-space: pre; 
-    cursor: text; transform-origin: 0% 0%; pointer-events: auto; 
+.textLayer span {
+    color: transparent; position: absolute; white-space: pre;
+    cursor: text; transform-origin: 0% 0%; pointer-events: auto;
 }
-
 .textLayer ::selection { background: rgba(0, 123, 255, 0.35) !important; }
+.textLayer.hidden { display: none; } /* Penting: Sembunyikan saat animasi */
 
-/* --- MODE SEPIA --- */
-body.sepia-mode .pdf-container { background: #e6dcc3; }
-body.sepia-mode .pdf-wrapper { filter: sepia(0.3) contrast(0.9); }
-body.sepia-mode .reader-nav, body.sepia-mode .sidebar-notes { 
-    background: #f4ecd8; border-color: #d3c6a3; 
+/* LOADING OVERLAY */
+.loading-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 50; /* Paling atas di dalam wrapper */
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
 }
+.loading-overlay.active { opacity: 1; pointer-events: auto; }
 
-/* SIDEBAR */
-.sidebar-notes { 
-    width: 320px; 
-    background: var(--bg-card); 
-    border-left: 1px solid var(--border); 
-    display: flex; flex-direction: column; transition: 0.3s; z-index: 500; 
+.spinner {
+    width: 40px; height: 40px; border: 4px solid #f3f3f3;
+    border-top: 4px solid #333; border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* SIDEBAR & MODES */
+.sidebar-notes {
+    width: 300px; background: var(--bg-card, #fff);
+    border-left: 1px solid var(--border, #ddd);
+    transition: 0.3s; z-index: 200;
 }
 .sidebar-notes.hidden { width: 0; border: none; overflow: hidden; }
 
-.sidebar-header {
-    padding: 20px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-}
-
-.highlights-list { padding: 20px; overflow-y: auto; flex: 1; }
-.highlight-card { 
-    background: var(--bg-input); border-left: 4px solid #f1c40f; 
-    padding: 12px; margin-bottom: 15px; border-radius: 4px; box-shadow: var(--shadow); 
-}
+/* Mode Sepia */
+body.sepia-mode .pdf-container { background: #e6dcc3; }
+body.sepia-mode .pdf-wrapper { filter: sepia(0.3) contrast(0.95); }
+body.sepia-mode .loading-overlay { background: rgba(244, 236, 216, 0.9); }
